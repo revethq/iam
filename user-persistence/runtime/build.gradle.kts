@@ -8,7 +8,7 @@ val quarkusVersion: String by project
 dependencies {
     api(project(":user"))
 
-    implementation(enforcedPlatform("io.quarkus:quarkus-bom:${quarkusVersion}"))
+    implementation(platform("io.quarkus:quarkus-bom:${quarkusVersion}"))
     implementation("io.quarkus:quarkus-arc")
     implementation("io.quarkus:quarkus-hibernate-orm-panache-kotlin")
     implementation("io.quarkus:quarkus-jdbc-postgresql")

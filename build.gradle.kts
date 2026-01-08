@@ -6,9 +6,17 @@ plugins {
     id("org.jreleaser") version "1.22.0"
 }
 
+buildscript {
+    configurations.classpath {
+        resolutionStrategy {
+            force("org.eclipse.jgit:org.eclipse.jgit:5.13.3.202401111512-r")
+        }
+    }
+}
+
 allprojects {
     group = "com.revethq.iam"
-    version = "0.1.0"
+    version = "0.1.1"
 
     repositories {
         mavenCentral()
