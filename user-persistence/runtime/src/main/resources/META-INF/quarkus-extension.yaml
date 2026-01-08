@@ -1,0 +1,7 @@
+name: Revet User Persistence
+artifact: ${project.groupId}:${project.artifactId}:${project.version}
+description: Persistence layer for Revet IAM User module
+metadata:
+  categories:
+    - "data"
+  status: "experimental"
