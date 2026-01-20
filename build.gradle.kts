@@ -16,7 +16,7 @@ buildscript {
 
 allprojects {
     group = "com.revethq.iam"
-    version = "0.1.3"
+    version = "0.1.4"
 
     repositories {
         mavenCentral()
@@ -56,7 +56,8 @@ subprojects {
     configure<PublishingExtension> {
         publications {
             create<MavenPublication>("maven") {
-                artifactId = "revet-${project.name}"
+                // Use full path for nested modules (e.g., :permission-persistence:runtime -> permission-persistence-runtime)
+                artifactId = "revet-${project.path.removePrefix(":").replace(":", "-")}"
                 from(components["java"])
 
                 pom {
