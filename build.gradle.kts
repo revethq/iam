@@ -16,7 +16,7 @@ buildscript {
 
 allprojects {
     group = "com.revethq.iam"
-    version = "0.1.2"
+    version = "0.1.3"
 
     repositories {
         mavenCentral()
@@ -121,7 +121,12 @@ jreleaser {
                     active.set(org.jreleaser.model.Active.ALWAYS)
                     url.set("https://central.sonatype.com/api/v1/publisher")
                     stagingRepository("user/build/staging-deploy")
+                    stagingRepository("user-persistence/runtime/build/staging-deploy")
+                    stagingRepository("user-persistence/deployment/build/staging-deploy")
                     stagingRepository("permission/build/staging-deploy")
+                    stagingRepository("permission-persistence/runtime/build/staging-deploy")
+                    stagingRepository("permission-persistence/deployment/build/staging-deploy")
+                    stagingRepository("permission-web/build/staging-deploy")
                     stagingRepository("scim/build/staging-deploy")
                 }
             }
