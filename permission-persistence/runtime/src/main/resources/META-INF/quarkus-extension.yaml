@@ -1,0 +1,7 @@
+name: Revet Permission Persistence
+artifact: ${project.groupId}:${project.artifactId}:${project.version}
+description: Persistence layer for Revet IAM Permission module
+metadata:
+  categories:
+    - "data"
+  status: "experimental"

@@ -25,7 +25,7 @@ allprojects {
 
 subprojects {
     // Skip parent modules that don't have source code
-    if (name == "user-persistence") return@subprojects
+    if (name == "user-persistence" || name == "permission-persistence") return@subprojects
 
     apply(plugin = "org.jetbrains.kotlin.jvm")
     apply(plugin = "java-library")
