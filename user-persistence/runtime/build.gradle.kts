@@ -5,6 +5,10 @@ plugins {
 
 val quarkusVersion: String by project
 
+quarkusExtension {
+    deploymentArtifact.set("${project.group}:revet-user-persistence-deployment:${project.version}")
+}
+
 dependencies {
     api(project(":user"))
 
