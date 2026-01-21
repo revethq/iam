@@ -12,6 +12,9 @@ buildscript {
 }
 
 dependencies {
+    implementation("jakarta.enterprise:jakarta.enterprise.cdi-api:4.0.1")
+    implementation("jakarta.inject:jakarta.inject-api:2.0.1")
+
     testImplementation(kotlin("test"))
     testImplementation("io.mockk:mockk:1.13.8")
 }

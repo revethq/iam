@@ -4,6 +4,8 @@ import com.revethq.iam.permission.condition.ConditionEvaluator
 import com.revethq.iam.permission.domain.Effect
 import com.revethq.iam.permission.domain.Policy
 import com.revethq.iam.permission.domain.Statement
+import jakarta.enterprise.context.ApplicationScoped
+import jakarta.inject.Inject
 
 /**
  * Service interface for policy evaluation.
@@ -30,7 +32,8 @@ interface PolicyEvaluator {
  *    - If any Allow statement matched → ALLOW
  *    - Otherwise → DENY (implicit)
  */
-class DefaultPolicyEvaluator(
+@ApplicationScoped
+class DefaultPolicyEvaluator @Inject constructor(
     private val policyCollector: PolicyCollector
 ) : PolicyEvaluator {
 
