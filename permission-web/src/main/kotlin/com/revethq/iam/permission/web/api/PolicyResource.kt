@@ -10,6 +10,7 @@ import com.revethq.iam.permission.web.dto.PolicyListResponse
 import com.revethq.iam.permission.web.dto.PolicyResponse
 import com.revethq.iam.permission.web.dto.UpdatePolicyRequest
 import com.revethq.iam.permission.web.exception.PolicyAttachmentConflictException
+import com.revethq.iam.permission.web.exception.PolicyAttachmentNotFoundException
 import com.revethq.iam.permission.web.exception.PolicyConflictException
 import com.revethq.iam.permission.web.exception.PolicyNotFoundException
 import jakarta.inject.Inject
@@ -128,13 +129,16 @@ class PolicyResource {
     }
 
     @DELETE
-    @Path("/{id}/attachments/{principalUrn}")
+    @Path("/{id}/attachments/{attachmentId}")
     fun detachPolicy(
         @PathParam("id") id: String,
-        @PathParam("principalUrn") principalUrn: String
+        @PathParam("attachmentId") attachmentId: String
     ): Response {
-        val uuid = UUID.fromString(id)
-        policyAttachmentService.detach(uuid, principalUrn)
+        val policyUuid = UUID.fromString(id)
+        val attachmentUuid = UUID.fromString(attachmentId)
+        if (!policyAttachmentService.detach(policyUuid, attachmentUuid)) {
+            throw PolicyAttachmentNotFoundException(attachmentId)
+        }
         return Response.noContent().build()
     }
 

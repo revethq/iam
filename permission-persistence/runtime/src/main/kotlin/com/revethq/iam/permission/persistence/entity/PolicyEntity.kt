@@ -16,7 +16,7 @@ import java.util.UUID
 
 @Entity
 @Table(name = "revet_policies")
-class PolicyEntity {
+open class PolicyEntity {
 
     @Id
     lateinit var id: UUID

@@ -13,7 +13,7 @@ import java.util.UUID
 
 @Entity
 @Table(name = "revet_users")
-class UserEntity {
+open class UserEntity {
 
     @Id
     lateinit var id: UUID

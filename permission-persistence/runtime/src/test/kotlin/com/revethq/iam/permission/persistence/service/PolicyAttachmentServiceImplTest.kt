@@ -53,18 +53,34 @@ class PolicyAttachmentServiceImplTest {
 
     @Test
     fun `detach policy from principal`() {
-        every { policyAttachmentRepository.deleteByPolicyIdAndPrincipalUrn(policyId, principalUrn) } returns true
+        val attachmentId = UUID.randomUUID()
+        val attachment = createAttachmentEntity(policyId = policyId).apply { id = attachmentId }
+        every { policyAttachmentRepository.findById(attachmentId) } returns attachment
+        every { policyAttachmentRepository.deleteById(attachmentId) } returns true
 
-        val result = service.detach(policyId, principalUrn)
+        val result = service.detach(policyId, attachmentId)
 
         assertTrue(result)
     }
 
     @Test
-    fun `detach returns false when not found`() {
-        every { policyAttachmentRepository.deleteByPolicyIdAndPrincipalUrn(policyId, principalUrn) } returns false
+    fun `detach returns false when attachment not found`() {
+        val attachmentId = UUID.randomUUID()
+        every { policyAttachmentRepository.findById(attachmentId) } returns null
 
-        val result = service.detach(policyId, principalUrn)
+        val result = service.detach(policyId, attachmentId)
+
+        assertFalse(result)
+    }
+
+    @Test
+    fun `detach returns false when attachment belongs to different policy`() {
+        val attachmentId = UUID.randomUUID()
+        val differentPolicyId = UUID.randomUUID()
+        val attachment = createAttachmentEntity(policyId = differentPolicyId).apply { id = attachmentId }
+        every { policyAttachmentRepository.findById(attachmentId) } returns attachment
+
+        val result = service.detach(policyId, attachmentId)
 
         assertFalse(result)
     }

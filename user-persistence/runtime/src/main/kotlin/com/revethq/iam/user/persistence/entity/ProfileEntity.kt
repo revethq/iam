@@ -15,7 +15,7 @@ import java.util.UUID
 
 @Entity
 @Table(name = "revet_profiles")
-class ProfileEntity {
+open class ProfileEntity {
 
     @Id
     lateinit var id: UUID

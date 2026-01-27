@@ -16,7 +16,7 @@ buildscript {
 
 allprojects {
     group = "com.revethq.iam"
-    version = "0.1.10"
+    version = "0.1.13"
 
     repositories {
         mavenCentral()
@@ -128,6 +128,7 @@ jreleaser {
                     stagingRepository("permission-persistence/runtime/build/staging-deploy")
                     stagingRepository("permission-persistence/deployment/build/staging-deploy")
                     stagingRepository("permission-web/build/staging-deploy")
+                    stagingRepository("user-web/build/staging-deploy")
                     stagingRepository("scim/build/staging-deploy")
                 }
             }

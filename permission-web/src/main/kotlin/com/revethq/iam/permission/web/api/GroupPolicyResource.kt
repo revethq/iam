@@ -1,8 +1,8 @@
 package com.revethq.iam.permission.web.api
 
 import com.revethq.iam.permission.persistence.service.PolicyAttachmentService
+import com.revethq.iam.permission.web.dto.AttachedPolicyResponse
 import com.revethq.iam.permission.web.dto.PageResponse
-import com.revethq.iam.permission.web.dto.PolicyResponse
 import jakarta.inject.Inject
 import jakarta.ws.rs.Consumes
 import jakarta.ws.rs.DefaultValue
@@ -27,9 +27,9 @@ class GroupPolicyResource {
         @PathParam("id") id: String,
         @QueryParam("page") @DefaultValue("0") page: Int,
         @QueryParam("size") @DefaultValue("20") size: Int
-    ): PageResponse<PolicyResponse> {
+    ): PageResponse<AttachedPolicyResponse> {
         val principalUrn = "urn:revet:iam::group/$id"
-        val allPolicies = policyAttachmentService.listPoliciesForPrincipal(principalUrn)
+        val allPolicies = policyAttachmentService.listAttachedPoliciesForPrincipal(principalUrn)
 
         val start = page * size
         val end = minOf(start + size + 1, allPolicies.size)
@@ -41,7 +41,7 @@ class GroupPolicyResource {
         val hasMore = end > start + size
 
         return PageResponse(
-            content = pageContent.map { PolicyResponse.fromDomain(it) },
+            content = pageContent.map { AttachedPolicyResponse.fromDomain(it) },
             page = page,
             size = size,
             hasMore = hasMore

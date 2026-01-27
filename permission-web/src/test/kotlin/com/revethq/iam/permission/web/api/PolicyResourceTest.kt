@@ -12,6 +12,7 @@ import com.revethq.iam.permission.web.dto.CreatePolicyRequest
 import com.revethq.iam.permission.web.dto.StatementDto
 import com.revethq.iam.permission.web.dto.UpdatePolicyRequest
 import com.revethq.iam.permission.web.exception.PolicyAttachmentConflictException
+import com.revethq.iam.permission.web.exception.PolicyAttachmentNotFoundException
 import com.revethq.iam.permission.web.exception.PolicyConflictException
 import com.revethq.iam.permission.web.exception.PolicyNotFoundException
 import io.mockk.every
@@ -196,13 +197,25 @@ class PolicyResourceTest {
     @Test
     fun `detachPolicy returns 204 on success`() {
         val policyId = UUID.randomUUID()
-        val principalUrn = "urn:revet:iam::user/alice"
+        val attachmentId = UUID.randomUUID()
 
-        every { policyAttachmentService.detach(policyId, principalUrn) } returns true
+        every { policyAttachmentService.detach(policyId, attachmentId) } returns true
 
-        val response = resource.detachPolicy(policyId.toString(), principalUrn)
+        val response = resource.detachPolicy(policyId.toString(), attachmentId.toString())
 
         assertEquals(204, response.status)
+    }
+
+    @Test
+    fun `detachPolicy throws not found when attachment does not exist`() {
+        val policyId = UUID.randomUUID()
+        val attachmentId = UUID.randomUUID()
+
+        every { policyAttachmentService.detach(policyId, attachmentId) } returns false
+
+        assertFailsWith<PolicyAttachmentNotFoundException> {
+            resource.detachPolicy(policyId.toString(), attachmentId.toString())
+        }
     }
 
     @Test

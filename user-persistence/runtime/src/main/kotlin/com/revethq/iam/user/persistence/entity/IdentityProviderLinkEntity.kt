@@ -13,7 +13,7 @@ import java.util.UUID
 
 @Entity
 @Table(name = "revet_identity_provider_links")
-class IdentityProviderLinkEntity {
+open class IdentityProviderLinkEntity {
 
     @Id
     lateinit var id: UUID

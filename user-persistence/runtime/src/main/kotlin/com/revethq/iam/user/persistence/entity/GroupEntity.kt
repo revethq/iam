@@ -13,7 +13,7 @@ import java.util.UUID
 
 @Entity
 @Table(name = "revet_groups")
-class GroupEntity {
+open class GroupEntity {
 
     @Id
     lateinit var id: UUID

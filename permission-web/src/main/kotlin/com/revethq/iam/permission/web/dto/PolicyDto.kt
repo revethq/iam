@@ -89,6 +89,26 @@ data class PolicyListResponse(
 )
 
 /**
+ * Response for a policy with its attachment information.
+ */
+data class AttachedPolicyResponse(
+    val attachmentId: UUID,
+    val policy: PolicyResponse,
+    val attachedOn: OffsetDateTime?,
+    val attachedBy: String?
+) {
+    companion object {
+        fun fromDomain(attached: com.revethq.iam.permission.persistence.service.AttachedPolicy): AttachedPolicyResponse =
+            AttachedPolicyResponse(
+                attachmentId = attached.attachmentId,
+                policy = PolicyResponse.fromDomain(attached.policy),
+                attachedOn = attached.attachedOn,
+                attachedBy = attached.attachedBy
+            )
+    }
+}
+
+/**
  * Generic paginated response wrapper.
  * Uses hasMore instead of totalElements to avoid expensive COUNT queries.
  */
