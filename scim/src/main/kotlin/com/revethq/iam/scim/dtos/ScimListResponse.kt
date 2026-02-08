@@ -1,7 +1,9 @@
 package com.revethq.iam.scim.dtos
 
+import io.quarkus.runtime.annotations.RegisterForReflection
 import jakarta.json.bind.annotation.JsonbProperty
 
+@RegisterForReflection
 data class ScimListResponse<T>(
     val schemas: List<String> = listOf(SCHEMA_LIST_RESPONSE),
     val totalResults: Int,

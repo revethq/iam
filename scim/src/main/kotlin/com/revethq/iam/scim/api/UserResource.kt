@@ -35,8 +35,11 @@ import org.eclipse.microprofile.openapi.annotations.parameters.RequestBody
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponse
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponses
 import org.eclipse.microprofile.openapi.annotations.tags.Tag
+import io.quarkus.runtime.annotations.RegisterForReflection
 import java.util.UUID
 
+@ScimEndpoint
+@RegisterForReflection
 @Path("/scim/v2/Users")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)

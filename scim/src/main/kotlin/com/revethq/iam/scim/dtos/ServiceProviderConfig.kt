@@ -1,5 +1,8 @@
 package com.revethq.iam.scim.dtos
 
+import io.quarkus.runtime.annotations.RegisterForReflection
+
+@RegisterForReflection
 data class ServiceProviderConfig(
     val schemas: List<String> = listOf(SCHEMA_SERVICE_PROVIDER_CONFIG),
     val documentationUri: String? = null,
@@ -25,21 +28,25 @@ data class ServiceProviderConfig(
     }
 }
 
+@RegisterForReflection
 data class SupportedFeature(
     val supported: Boolean
 )
 
+@RegisterForReflection
 data class BulkFeature(
     val supported: Boolean,
     val maxOperations: Int = 0,
     val maxPayloadSize: Int = 0
 )
 
+@RegisterForReflection
 data class FilterFeature(
     val supported: Boolean,
     val maxResults: Int = 200
 )
 
+@RegisterForReflection
 data class AuthenticationScheme(
     val type: String,
     val name: String,

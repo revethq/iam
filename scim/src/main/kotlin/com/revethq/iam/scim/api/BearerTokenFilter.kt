@@ -11,6 +11,7 @@ import jakarta.ws.rs.ext.Provider
 import org.eclipse.microprofile.jwt.JsonWebToken
 
 @Provider
+@ScimEndpoint
 @Priority(Priorities.AUTHENTICATION)
 class BearerTokenFilter : ContainerRequestFilter {
 

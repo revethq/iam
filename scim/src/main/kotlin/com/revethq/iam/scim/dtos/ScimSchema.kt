@@ -1,5 +1,8 @@
 package com.revethq.iam.scim.dtos
 
+import io.quarkus.runtime.annotations.RegisterForReflection
+
+@RegisterForReflection
 data class ScimSchema(
     val schemas: List<String> = listOf(SCHEMA_SCHEMA),
     val id: String,
@@ -13,6 +16,7 @@ data class ScimSchema(
     }
 }
 
+@RegisterForReflection
 data class ScimSchemaAttribute(
     val name: String,
     val type: String,

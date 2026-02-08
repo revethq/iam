@@ -1,5 +1,8 @@
 package com.revethq.iam.scim.dtos
 
+import io.quarkus.runtime.annotations.RegisterForReflection
+
+@RegisterForReflection
 data class ScimResourceType(
     val schemas: List<String> = listOf(SCHEMA_RESOURCE_TYPE),
     val id: String,
@@ -15,6 +18,7 @@ data class ScimResourceType(
     }
 }
 
+@RegisterForReflection
 data class SchemaExtension(
     val schema: String,
     val required: Boolean = false

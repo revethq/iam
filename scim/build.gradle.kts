@@ -34,6 +34,11 @@ dependencies {
     // CDI API
     api("jakarta.enterprise:jakarta.enterprise.cdi-api:4.0.1")
 
+    // Quarkus core (for @RegisterForReflection)
+    val quarkusVersion: String by project
+    api(platform("io.quarkus:quarkus-bom:${quarkusVersion}"))
+    api("io.quarkus:quarkus-core")
+
     // Transaction API
     api("jakarta.transaction:jakarta.transaction-api:2.0.1")
 

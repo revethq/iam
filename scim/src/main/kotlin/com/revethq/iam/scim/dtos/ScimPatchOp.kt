@@ -1,7 +1,9 @@
 package com.revethq.iam.scim.dtos
 
+import io.quarkus.runtime.annotations.RegisterForReflection
 import jakarta.json.bind.annotation.JsonbProperty
 
+@RegisterForReflection
 data class ScimPatchOp(
     val schemas: List<String> = listOf(SCHEMA_PATCH_OP),
     @get:JsonbProperty("Operations")
@@ -12,6 +14,7 @@ data class ScimPatchOp(
     }
 }
 
+@RegisterForReflection
 data class ScimPatchOperation(
     val op: String,
     val path: String? = null,

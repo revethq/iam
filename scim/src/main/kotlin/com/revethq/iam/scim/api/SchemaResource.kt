@@ -1,5 +1,6 @@
 package com.revethq.iam.scim.api
 
+import io.quarkus.runtime.annotations.RegisterForReflection
 import com.revethq.iam.scim.dtos.ScimListResponse
 import com.revethq.iam.scim.dtos.ScimMeta
 import com.revethq.iam.scim.dtos.ScimSchema
@@ -20,6 +21,8 @@ import org.eclipse.microprofile.openapi.annotations.responses.APIResponse
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponses
 import org.eclipse.microprofile.openapi.annotations.tags.Tag
 
+@ScimEndpoint
+@RegisterForReflection
 @Path("/scim/v2/Schemas")
 @Produces(MediaType.APPLICATION_JSON)
 @Tag(name = "SCIM Discovery", description = "SCIM 2.0 discovery endpoints")

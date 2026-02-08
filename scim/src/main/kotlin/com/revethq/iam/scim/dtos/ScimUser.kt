@@ -1,5 +1,8 @@
 package com.revethq.iam.scim.dtos
 
+import io.quarkus.runtime.annotations.RegisterForReflection
+
+@RegisterForReflection
 data class ScimUser(
     val schemas: List<String> = listOf(SCHEMA_USER),
     val id: String? = null,
