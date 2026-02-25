@@ -1,0 +1,25 @@
+{
+  "version": 1,
+  "skills": {
+    "revet-auth": {
+      "source": "/home/brycegroff/Projects/revet/revet-skills",
+      "sourceType": "local",
+      "computedHash": "ce65f267a046c304221e29b78ddb0146f78615c2b8976773c7480f7ae2a64dd6"
+    },
+    "revet-core": {
+      "source": "/home/brycegroff/Projects/revet/revet-skills",
+      "sourceType": "local",
+      "computedHash": "fb36701f297d7d9c85109419aeb1118229260b83648ee87cb7bc55029c29c1bb"
+    },
+    "revet-iam": {
+      "source": "/home/brycegroff/Projects/revet/revet-skills",
+      "sourceType": "local",
+      "computedHash": "be63be9498b8afcbb3121c7dc65ee213e132714b486acc3b0efabaed1d78c65a"
+    },
+    "revet-quarkus": {
+      "source": "/home/brycegroff/Projects/revet/revet-skills",
+      "sourceType": "local",
+      "computedHash": "595c3307206ee97c26efaae1e8980e5df3f498c9df039f5349e8911c0ca93d7a"
+    }
+  }
+}

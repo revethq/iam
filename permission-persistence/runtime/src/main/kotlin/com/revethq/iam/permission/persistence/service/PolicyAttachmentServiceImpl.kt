@@ -5,6 +5,8 @@ import com.revethq.iam.permission.domain.PolicyAttachment
 import com.revethq.iam.permission.persistence.entity.PolicyAttachmentEntity
 import com.revethq.iam.permission.persistence.repository.PolicyAttachmentRepository
 import com.revethq.iam.permission.persistence.repository.PolicyRepository
+import com.revethq.iam.permission.service.AttachedPolicy
+import com.revethq.iam.permission.service.PolicyAttachmentService
 import jakarta.enterprise.context.ApplicationScoped
 import jakarta.transaction.Transactional
 import org.jboss.logging.Logger

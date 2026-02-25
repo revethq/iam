@@ -1,6 +1,6 @@
 package com.revethq.iam.permission.web.api
 
-import com.revethq.iam.permission.persistence.service.PolicyAttachmentService
+import com.revethq.iam.permission.service.PolicyAttachmentService
 import com.revethq.iam.permission.web.dto.AttachedPolicyResponse
 import com.revethq.iam.permission.web.dto.PageResponse
 import jakarta.inject.Inject

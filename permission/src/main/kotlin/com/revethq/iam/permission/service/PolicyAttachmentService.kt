@@ -1,4 +1,4 @@
-package com.revethq.iam.permission.persistence.service
+package com.revethq.iam.permission.service
 
 import com.revethq.iam.permission.domain.Policy
 import com.revethq.iam.permission.domain.PolicyAttachment

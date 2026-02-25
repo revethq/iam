@@ -1,6 +1,6 @@
 package com.revethq.iam.permission.web.api
 
-import com.revethq.iam.permission.persistence.service.PolicyAttachmentService
+import com.revethq.iam.permission.service.PolicyAttachmentService
 import com.revethq.iam.permission.persistence.service.PolicyService
 import com.revethq.iam.permission.web.dto.AttachPolicyRequest
 import com.revethq.iam.permission.web.dto.CreatePolicyRequest

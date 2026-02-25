@@ -130,6 +130,9 @@ jreleaser {
                     stagingRepository("permission-web/build/staging-deploy")
                     stagingRepository("user-web/build/staging-deploy")
                     stagingRepository("scim/build/staging-deploy")
+                    stagingRepository("service-account/build/staging-deploy")
+                    stagingRepository("service-account-persistence/build/staging-deploy")
+                    stagingRepository("service-account-web/build/staging-deploy")
                 }
             }
         }

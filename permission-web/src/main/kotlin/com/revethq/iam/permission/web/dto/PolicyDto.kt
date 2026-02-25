@@ -98,7 +98,7 @@ data class AttachedPolicyResponse(
     val attachedBy: String?
 ) {
     companion object {
-        fun fromDomain(attached: com.revethq.iam.permission.persistence.service.AttachedPolicy): AttachedPolicyResponse =
+        fun fromDomain(attached: com.revethq.iam.permission.service.AttachedPolicy): AttachedPolicyResponse =
             AttachedPolicyResponse(
                 attachmentId = attached.attachmentId,
                 policy = PolicyResponse.fromDomain(attached.policy),

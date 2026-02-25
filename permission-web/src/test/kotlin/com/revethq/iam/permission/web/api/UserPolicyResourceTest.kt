@@ -3,8 +3,8 @@ package com.revethq.iam.permission.web.api
 import com.revethq.iam.permission.domain.Effect
 import com.revethq.iam.permission.domain.Policy
 import com.revethq.iam.permission.domain.Statement
-import com.revethq.iam.permission.persistence.service.AttachedPolicy
-import com.revethq.iam.permission.persistence.service.PolicyAttachmentService
+import com.revethq.iam.permission.service.AttachedPolicy
+import com.revethq.iam.permission.service.PolicyAttachmentService
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify

@@ -5,7 +5,7 @@ import com.revethq.iam.permission.domain.Policy
 import com.revethq.iam.permission.domain.PolicyAttachment
 import com.revethq.iam.permission.domain.Statement
 import com.revethq.iam.permission.persistence.Page
-import com.revethq.iam.permission.persistence.service.PolicyAttachmentService
+import com.revethq.iam.permission.service.PolicyAttachmentService
 import com.revethq.iam.permission.persistence.service.PolicyService
 import com.revethq.iam.permission.web.dto.AttachPolicyRequest
 import com.revethq.iam.permission.web.dto.CreatePolicyRequest

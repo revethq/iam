@@ -1,0 +1,59 @@
+package com.revethq.iam.serviceaccount.web.api
+
+import com.revethq.iam.permission.service.PolicyAttachmentService
+import com.revethq.iam.permission.web.dto.AttachedPolicyResponse
+import com.revethq.iam.serviceaccount.persistence.service.ServiceAccountService
+import com.revethq.iam.serviceaccount.web.dto.PageResponse
+import com.revethq.iam.serviceaccount.web.exception.ServiceAccountNotFoundException
+import jakarta.inject.Inject
+import jakarta.ws.rs.Consumes
+import jakarta.ws.rs.DefaultValue
+import jakarta.ws.rs.GET
+import jakarta.ws.rs.Path
+import jakarta.ws.rs.PathParam
+import jakarta.ws.rs.Produces
+import jakarta.ws.rs.QueryParam
+import jakarta.ws.rs.core.MediaType
+import java.util.UUID
+
+@Path("/service-accounts")
+@Produces(MediaType.APPLICATION_JSON)
+@Consumes(MediaType.APPLICATION_JSON)
+class ServiceAccountPolicyResource {
+
+    @Inject
+    lateinit var serviceAccountService: ServiceAccountService
+
+    @Inject
+    lateinit var policyAttachmentService: PolicyAttachmentService
+
+    @GET
+    @Path("/{id}/policies")
+    fun listPoliciesForServiceAccount(
+        @PathParam("id") id: String,
+        @QueryParam("page") @DefaultValue("0") page: Int,
+        @QueryParam("size") @DefaultValue("20") size: Int
+    ): PageResponse<AttachedPolicyResponse> {
+        val uuid = UUID.fromString(id)
+        val serviceAccount = serviceAccountService.findById(uuid)
+            ?: throw ServiceAccountNotFoundException(id)
+
+        val allPolicies = policyAttachmentService.listAttachedPoliciesForPrincipal(serviceAccount.toUrn())
+
+        val start = page * size
+        val end = minOf(start + size + 1, allPolicies.size)
+        val pageContent = if (start < allPolicies.size) {
+            allPolicies.subList(start, minOf(start + size, allPolicies.size))
+        } else {
+            emptyList()
+        }
+        val hasMore = end > start + size
+
+        return PageResponse(
+            content = pageContent.map { AttachedPolicyResponse.fromDomain(it) },
+            page = page,
+            size = size,
+            hasMore = hasMore
+        )
+    }
+}
