@@ -31,8 +31,11 @@ object ScimFilterParser {
         val (attribute, operator, value) = match.destructured
         return when (operator.lowercase()) {
             "eq" -> EqFilter(attribute, value)
+
             "co" -> CoFilter(attribute, value)
+
             "sw" -> SwFilter(attribute, value)
+
             else -> throw ScimBadRequestException(
                 ScimError.INVALID_FILTER,
                 "Unsupported operator: $operator",

@@ -29,7 +29,10 @@ data class EqFilter(
         for (part in parts) {
             current =
                 when (current) {
-                    is Map<*, *> -> current[part]
+                    is Map<*, *> -> {
+                        current[part]
+                    }
+
                     is List<*> -> {
                         // For multi-valued attributes like emails, find first match
                         current
@@ -37,7 +40,10 @@ data class EqFilter(
                             .mapNotNull { it[part] }
                             .firstOrNull()
                     }
-                    else -> return null
+
+                    else -> {
+                        return null
+                    }
                 }
         }
         return current
@@ -67,14 +73,20 @@ data class CoFilter(
         for (part in parts) {
             current =
                 when (current) {
-                    is Map<*, *> -> current[part]
+                    is Map<*, *> -> {
+                        current[part]
+                    }
+
                     is List<*> -> {
                         current
                             .filterIsInstance<Map<*, *>>()
                             .mapNotNull { it[part] }
                             .firstOrNull()
                     }
-                    else -> return null
+
+                    else -> {
+                        return null
+                    }
                 }
         }
         return current
@@ -104,14 +116,20 @@ data class SwFilter(
         for (part in parts) {
             current =
                 when (current) {
-                    is Map<*, *> -> current[part]
+                    is Map<*, *> -> {
+                        current[part]
+                    }
+
                     is List<*> -> {
                         current
                             .filterIsInstance<Map<*, *>>()
                             .mapNotNull { it[part] }
                             .firstOrNull()
                     }
-                    else -> return null
+
+                    else -> {
+                        return null
+                    }
                 }
         }
         return current

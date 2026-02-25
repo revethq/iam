@@ -52,46 +52,79 @@ object ConditionEvaluator {
     ): Boolean =
         when (operator) {
             // String conditions
-            ConditionOperator.STRING_EQUALS ->
+            ConditionOperator.STRING_EQUALS -> {
                 contextValue != null && conditionValues.any { it == contextValue }
-            ConditionOperator.STRING_NOT_EQUALS ->
+            }
+
+            ConditionOperator.STRING_NOT_EQUALS -> {
                 contextValue != null && conditionValues.none { it == contextValue }
-            ConditionOperator.STRING_EQUALS_IGNORE_CASE ->
+            }
+
+            ConditionOperator.STRING_EQUALS_IGNORE_CASE -> {
                 contextValue != null && conditionValues.any { it.equals(contextValue, ignoreCase = true) }
-            ConditionOperator.STRING_NOT_EQUALS_IGNORE_CASE ->
+            }
+
+            ConditionOperator.STRING_NOT_EQUALS_IGNORE_CASE -> {
                 contextValue != null && conditionValues.none { it.equals(contextValue, ignoreCase = true) }
-            ConditionOperator.STRING_LIKE ->
+            }
+
+            ConditionOperator.STRING_LIKE -> {
                 contextValue != null && conditionValues.any { matchesLike(contextValue, it) }
-            ConditionOperator.STRING_NOT_LIKE ->
+            }
+
+            ConditionOperator.STRING_NOT_LIKE -> {
                 contextValue != null && conditionValues.none { matchesLike(contextValue, it) }
+            }
 
             // Numeric conditions
-            ConditionOperator.NUMERIC_EQUALS ->
+            ConditionOperator.NUMERIC_EQUALS -> {
                 evaluateNumeric(contextValue, conditionValues) { cv, v -> cv.compareTo(v) == 0 }
-            ConditionOperator.NUMERIC_NOT_EQUALS ->
+            }
+
+            ConditionOperator.NUMERIC_NOT_EQUALS -> {
                 evaluateNumericNone(contextValue, conditionValues) { cv, v -> cv.compareTo(v) == 0 }
-            ConditionOperator.NUMERIC_LESS_THAN ->
+            }
+
+            ConditionOperator.NUMERIC_LESS_THAN -> {
                 evaluateNumeric(contextValue, conditionValues) { cv, v -> cv < v }
-            ConditionOperator.NUMERIC_LESS_THAN_EQUALS ->
+            }
+
+            ConditionOperator.NUMERIC_LESS_THAN_EQUALS -> {
                 evaluateNumeric(contextValue, conditionValues) { cv, v -> cv <= v }
-            ConditionOperator.NUMERIC_GREATER_THAN ->
+            }
+
+            ConditionOperator.NUMERIC_GREATER_THAN -> {
                 evaluateNumeric(contextValue, conditionValues) { cv, v -> cv > v }
-            ConditionOperator.NUMERIC_GREATER_THAN_EQUALS ->
+            }
+
+            ConditionOperator.NUMERIC_GREATER_THAN_EQUALS -> {
                 evaluateNumeric(contextValue, conditionValues) { cv, v -> cv >= v }
+            }
 
             // Date conditions
-            ConditionOperator.DATE_EQUALS ->
+            ConditionOperator.DATE_EQUALS -> {
                 evaluateDate(contextValue, conditionValues) { cv, v -> cv.isEqual(v) }
-            ConditionOperator.DATE_NOT_EQUALS ->
+            }
+
+            ConditionOperator.DATE_NOT_EQUALS -> {
                 evaluateDateNone(contextValue, conditionValues) { cv, v -> cv.isEqual(v) }
-            ConditionOperator.DATE_LESS_THAN ->
+            }
+
+            ConditionOperator.DATE_LESS_THAN -> {
                 evaluateDate(contextValue, conditionValues) { cv, v -> cv.isBefore(v) }
-            ConditionOperator.DATE_LESS_THAN_EQUALS ->
+            }
+
+            ConditionOperator.DATE_LESS_THAN_EQUALS -> {
                 evaluateDate(contextValue, conditionValues) { cv, v -> !cv.isAfter(v) }
-            ConditionOperator.DATE_GREATER_THAN ->
+            }
+
+            ConditionOperator.DATE_GREATER_THAN -> {
                 evaluateDate(contextValue, conditionValues) { cv, v -> cv.isAfter(v) }
-            ConditionOperator.DATE_GREATER_THAN_EQUALS ->
+            }
+
+            ConditionOperator.DATE_GREATER_THAN_EQUALS -> {
                 evaluateDate(contextValue, conditionValues) { cv, v -> !cv.isBefore(v) }
+            }
 
             // Boolean condition
             ConditionOperator.BOOL -> {
@@ -103,10 +136,13 @@ object ConditionEvaluator {
             }
 
             // IP address conditions
-            ConditionOperator.IP_ADDRESS ->
+            ConditionOperator.IP_ADDRESS -> {
                 contextValue != null && conditionValues.any { matchesIpAddress(contextValue, it) }
-            ConditionOperator.NOT_IP_ADDRESS ->
+            }
+
+            ConditionOperator.NOT_IP_ADDRESS -> {
                 contextValue != null && conditionValues.none { matchesIpAddress(contextValue, it) }
+            }
 
             // Null (existence) condition
             ConditionOperator.NULL -> {

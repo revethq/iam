@@ -244,7 +244,10 @@ class UserResource {
             when (operation.op.lowercase()) {
                 "replace" -> {
                     when (operation.path?.lowercase()) {
-                        "username" -> user = user.copy(username = operation.value.toString())
+                        "username" -> {
+                            user = user.copy(username = operation.value.toString())
+                        }
+
                         "active" -> {
                             val props =
                                 user.metadata.properties
@@ -253,7 +256,11 @@ class UserResource {
                             props["active"] = operation.value as Boolean
                             user = user.copy(metadata = user.metadata.copy(properties = props))
                         }
-                        "externalid" -> newExternalId = operation.value?.toString()
+
+                        "externalid" -> {
+                            newExternalId = operation.value?.toString()
+                        }
+
                         else -> {
                             // Handle nested paths or bulk replace
                             if (operation.path == null && operation.value is Map<*, *>) {
@@ -265,11 +272,13 @@ class UserResource {
                         }
                     }
                 }
+
                 "add" -> {
                     when (operation.path?.lowercase()) {
                         "externalid" -> newExternalId = operation.value?.toString()
                     }
                 }
+
                 "remove" -> {
                     when (operation.path?.lowercase()) {
                         "externalid" -> newExternalId = null

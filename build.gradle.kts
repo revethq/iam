@@ -25,7 +25,7 @@ buildscript {
 
 allprojects {
     group = "com.revethq.iam"
-    version = "0.1.14"
+    version = "0.1.15"
 
     repositories {
         mavenCentral()
@@ -40,6 +40,10 @@ subprojects {
     apply(plugin = "java-library")
     apply(plugin = "maven-publish")
     apply(plugin = "org.jlleitschuh.gradle.ktlint")
+
+    configure<org.jlleitschuh.gradle.ktlint.KtlintExtension> {
+        version.set("1.8.0")
+    }
 
     configure<JavaPluginExtension> {
         toolchain {

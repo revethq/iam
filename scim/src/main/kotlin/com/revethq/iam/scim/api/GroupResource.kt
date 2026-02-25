@@ -272,10 +272,12 @@ class GroupResource {
                             group = group.copy(displayName = operation.value.toString())
                             groupService.update(group)
                         }
+
                         "externalid" -> {
                             group = group.copy(externalId = operation.value?.toString())
                             groupService.update(group)
                         }
+
                         "members" -> {
                             @Suppress("UNCHECKED_CAST")
                             val memberList = operation.value as? List<Map<String, Any?>> ?: emptyList()
@@ -290,6 +292,7 @@ class GroupResource {
                         }
                     }
                 }
+
                 "add" -> {
                     when (operation.path?.lowercase()) {
                         "members" -> {
@@ -306,6 +309,7 @@ class GroupResource {
                         }
                     }
                 }
+
                 "remove" -> {
                     val path = operation.path ?: continue
                     // Handle path like "members[value eq \"userId\"]"

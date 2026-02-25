@@ -32,10 +32,12 @@ object ScimFilterHelper {
                     val user = userService.findByUsername(filter.value)
                     return FilteredResult(listOfNotNull(user), if (user != null) 1 else 0)
                 }
+
                 "externalid" -> {
                     val user = userService.findByExternalId(filter.value, identityProviderId)
                     return FilteredResult(listOfNotNull(user), if (user != null) 1 else 0)
                 }
+
                 "emails.value" -> {
                     val user = userService.findByEmail(filter.value)
                     return FilteredResult(listOfNotNull(user), if (user != null) 1 else 0)
@@ -79,6 +81,7 @@ object ScimFilterHelper {
                     val group = groupService.findByDisplayName(filter.value)
                     return FilteredResult(listOfNotNull(group), if (group != null) 1 else 0)
                 }
+
                 "externalid" -> {
                     val group = groupService.findByExternalId(filter.value)
                     return FilteredResult(listOfNotNull(group), if (group != null) 1 else 0)
