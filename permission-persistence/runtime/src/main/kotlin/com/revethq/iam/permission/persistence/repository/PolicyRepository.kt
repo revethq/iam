@@ -7,11 +7,12 @@ import java.util.UUID
 
 @ApplicationScoped
 class PolicyRepository : PanacheRepositoryBase<PolicyEntity, UUID> {
+    fun findByName(name: String): PolicyEntity? = find("name", name).firstResult()
 
-    fun findByName(name: String): PolicyEntity? =
-        find("name", name).firstResult()
-
-    fun findByNameAndTenantId(name: String, tenantId: String?): PolicyEntity? =
+    fun findByNameAndTenantId(
+        name: String,
+        tenantId: String?,
+    ): PolicyEntity? =
         if (tenantId != null) {
             find("name = ?1 and tenantId = ?2", name, tenantId).firstResult()
         } else {

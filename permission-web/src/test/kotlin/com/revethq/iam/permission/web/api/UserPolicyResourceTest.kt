@@ -16,20 +16,21 @@ import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 class UserPolicyResourceTest {
-
     private val policyAttachmentService = mockk<PolicyAttachmentService>()
 
-    private val resource = UserPolicyResource().apply {
-        this.policyAttachmentService = this@UserPolicyResourceTest.policyAttachmentService
-    }
+    private val resource =
+        UserPolicyResource().apply {
+            this.policyAttachmentService = this@UserPolicyResourceTest.policyAttachmentService
+        }
 
     @Test
     fun `listPoliciesForUser returns policies attached to user`() {
         val userId = UUID.randomUUID().toString()
-        val attachedPolicies = listOf(
-            createAttachedPolicy("AdminPolicy"),
-            createAttachedPolicy("ReadOnlyPolicy")
-        )
+        val attachedPolicies =
+            listOf(
+                createAttachedPolicy("AdminPolicy"),
+                createAttachedPolicy("ReadOnlyPolicy"),
+            )
 
         every { policyAttachmentService.listAttachedPoliciesForPrincipal("urn:revet:iam::user/$userId") } returns attachedPolicies
 
@@ -81,17 +82,20 @@ class UserPolicyResourceTest {
         assertFalse(page2.hasMore)
     }
 
-    private fun createAttachedPolicy(name: String): AttachedPolicy = AttachedPolicy(
-        attachmentId = UUID.randomUUID(),
-        policy = Policy(
-            id = UUID.randomUUID(),
-            name = name,
-            version = "2026-01-15",
-            statements = listOf(
-                Statement(effect = Effect.ALLOW, actions = listOf("iam:*"), resources = listOf("urn:revet:iam:*:*/*"))
-            )
-        ),
-        attachedOn = OffsetDateTime.now(),
-        attachedBy = null
-    )
+    private fun createAttachedPolicy(name: String): AttachedPolicy =
+        AttachedPolicy(
+            attachmentId = UUID.randomUUID(),
+            policy =
+                Policy(
+                    id = UUID.randomUUID(),
+                    name = name,
+                    version = "2026-01-15",
+                    statements =
+                        listOf(
+                            Statement(effect = Effect.ALLOW, actions = listOf("iam:*"), resources = listOf("urn:revet:iam:*:*/*")),
+                        ),
+                ),
+            attachedOn = OffsetDateTime.now(),
+            attachedBy = null,
+        )
 }

@@ -1,18 +1,16 @@
 plugins {
-    kotlin("jvm")
+    alias(libs.plugins.kotlin.jvm)
 }
-
-val quarkusVersion: String by project
 
 dependencies {
     implementation(project(":user-persistence:runtime"))
 
-    implementation(platform("io.quarkus:quarkus-bom:${quarkusVersion}"))
-    implementation("io.quarkus:quarkus-core-deployment")
-    implementation("io.quarkus:quarkus-arc-deployment")
-    implementation("io.quarkus:quarkus-hibernate-orm-panache-kotlin-deployment")
-    implementation("io.quarkus:quarkus-jdbc-postgresql-deployment")
-    implementation("io.quarkus:quarkus-flyway-deployment")
+    implementation(platform(libs.quarkus.bom))
+    implementation(libs.quarkus.core.deployment)
+    implementation(libs.quarkus.arc.deployment)
+    implementation(libs.quarkus.hibernate.orm.panache.kotlin.deployment)
+    implementation(libs.quarkus.jdbc.postgresql.deployment)
+    implementation(libs.quarkus.flyway.deployment)
 
     testImplementation(kotlin("test"))
 }

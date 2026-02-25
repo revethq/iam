@@ -7,9 +7,10 @@ import jakarta.enterprise.context.ApplicationScoped
 import jakarta.inject.Inject
 
 @ApplicationScoped
-class PanachePolicyCollector @Inject constructor(
-    private val policyAttachmentService: PolicyAttachmentService
-) : PolicyCollector {
-    override fun collectPolicies(principalUrn: String): List<Policy> =
-        policyAttachmentService.listPoliciesForPrincipal(principalUrn)
-}
+class PanachePolicyCollector
+    @Inject
+    constructor(
+        private val policyAttachmentService: PolicyAttachmentService,
+    ) : PolicyCollector {
+        override fun collectPolicies(principalUrn: String): List<Policy> = policyAttachmentService.listPoliciesForPrincipal(principalUrn)
+    }

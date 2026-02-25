@@ -8,7 +8,6 @@ import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
 class UrnTest {
-
     // ==================== Parsing Tests ====================
 
     @Test
@@ -79,26 +78,28 @@ class UrnTest {
 
     @Test
     fun `toString produces valid URN string`() {
-        val urn = Urn(
-            namespace = "revet",
-            service = "iam",
-            tenant = "acme-corp",
-            resourceType = "user",
-            resourceId = "alice"
-        )
+        val urn =
+            Urn(
+                namespace = "revet",
+                service = "iam",
+                tenant = "acme-corp",
+                resourceType = "user",
+                resourceId = "alice",
+            )
 
         assertEquals("urn:revet:iam:acme-corp:user/alice", urn.toString())
     }
 
     @Test
     fun `toString with empty tenant`() {
-        val urn = Urn(
-            namespace = "revet",
-            service = "iam",
-            tenant = "",
-            resourceType = "user",
-            resourceId = "alice"
-        )
+        val urn =
+            Urn(
+                namespace = "revet",
+                service = "iam",
+                tenant = "",
+                resourceType = "user",
+                resourceId = "alice",
+            )
 
         assertEquals("urn:revet:iam::user/alice", urn.toString())
     }

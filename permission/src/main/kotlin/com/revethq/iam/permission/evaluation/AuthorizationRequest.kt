@@ -14,14 +14,15 @@ data class AuthorizationRequest(
     val principalUrn: String,
     val action: String,
     val resourceUrn: String,
-    val context: ConditionContext = ConditionContext()
+    val context: ConditionContext = ConditionContext(),
 ) {
     /**
      * Create a ConditionContext populated with this request's data.
      */
-    fun toConditionContext(): ConditionContext = context.copy(
-        principalId = principalUrn,
-        requestedAction = action,
-        requestedResource = resourceUrn
-    )
+    fun toConditionContext(): ConditionContext =
+        context.copy(
+            principalId = principalUrn,
+            requestedAction = action,
+            requestedResource = resourceUrn,
+        )
 }

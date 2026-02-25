@@ -14,64 +14,78 @@ import java.util.UUID
 @ApplicationScoped
 class UserServiceImpl(
     private val userRepository: UserRepository,
-    private val identityProviderLinkRepository: IdentityProviderLinkRepository
+    private val identityProviderLinkRepository: IdentityProviderLinkRepository,
 ) : UserService {
-
     @Transactional
-    override fun create(user: User, identityProviderId: UUID, externalId: String?): User {
+    override fun create(
+        user: User,
+        identityProviderId: UUID,
+        externalId: String?,
+    ): User {
         val entity = UserEntity.fromDomain(user)
         userRepository.persist(entity)
 
         if (externalId != null) {
-            val link = IdentityProviderLink(
-                id = UUID.randomUUID(),
-                userId = entity.id,
-                identityProviderId = identityProviderId,
-                externalId = externalId
-            )
+            val link =
+                IdentityProviderLink(
+                    id = UUID.randomUUID(),
+                    userId = entity.id,
+                    identityProviderId = identityProviderId,
+                    externalId = externalId,
+                )
             identityProviderLinkRepository.persist(IdentityProviderLinkEntity.fromDomain(link))
         }
 
         return entity.toDomain()
     }
 
-    override fun findById(id: UUID): User? =
-        userRepository.findById(id)?.toDomain()
+    override fun findById(id: UUID): User? = userRepository.findById(id)?.toDomain()
 
-    override fun findByUsername(username: String): User? =
-        userRepository.findByUsername(username)?.toDomain()
+    override fun findByUsername(username: String): User? = userRepository.findByUsername(username)?.toDomain()
 
-    override fun findByEmail(email: String): User? =
-        userRepository.findByEmail(email)?.toDomain()
+    override fun findByEmail(email: String): User? = userRepository.findByEmail(email)?.toDomain()
 
-    override fun findByExternalId(externalId: String, identityProviderId: UUID): User? {
-        val link = identityProviderLinkRepository.findByExternalIdAndIdentityProviderId(externalId, identityProviderId)
-            ?: return null
+    override fun findByExternalId(
+        externalId: String,
+        identityProviderId: UUID,
+    ): User? {
+        val link =
+            identityProviderLinkRepository.findByExternalIdAndIdentityProviderId(externalId, identityProviderId)
+                ?: return null
         return userRepository.findById(link.userId)?.toDomain()
     }
 
-    override fun getExternalId(userId: UUID, identityProviderId: UUID): String? {
+    override fun getExternalId(
+        userId: UUID,
+        identityProviderId: UUID,
+    ): String? {
         val link = identityProviderLinkRepository.findByUserIdAndIdentityProviderId(userId, identityProviderId)
         return link?.externalId
     }
 
-    override fun list(startIndex: Int, count: Int): Page<User> {
+    override fun list(
+        startIndex: Int,
+        count: Int,
+    ): Page<User> {
         val total = userRepository.count()
-        val entities = userRepository.findAll()
-            .page(startIndex / count, count)
-            .list()
+        val entities =
+            userRepository
+                .findAll()
+                .page(startIndex / count, count)
+                .list()
         return Page(
             items = entities.map { it.toDomain() },
             totalCount = total,
             startIndex = startIndex,
-            itemsPerPage = count
+            itemsPerPage = count,
         )
     }
 
     @Transactional
     override fun update(user: User): User {
-        val existing = userRepository.findById(user.id)
-            ?: throw IllegalArgumentException("User not found: ${user.id}")
+        val existing =
+            userRepository.findById(user.id)
+                ?: throw IllegalArgumentException("User not found: ${user.id}")
         existing.username = user.username
         existing.email = user.email
         existing.metadata = user.metadata
@@ -80,7 +94,11 @@ class UserServiceImpl(
     }
 
     @Transactional
-    override fun updateExternalId(userId: UUID, identityProviderId: UUID, externalId: String?) {
+    override fun updateExternalId(
+        userId: UUID,
+        identityProviderId: UUID,
+        externalId: String?,
+    ) {
         val existingLink = identityProviderLinkRepository.findByUserIdAndIdentityProviderId(userId, identityProviderId)
 
         if (externalId == null) {
@@ -89,20 +107,19 @@ class UserServiceImpl(
             existingLink.externalId = externalId
             existingLink.updatedOn = java.time.OffsetDateTime.now()
         } else {
-            val link = IdentityProviderLink(
-                id = UUID.randomUUID(),
-                userId = userId,
-                identityProviderId = identityProviderId,
-                externalId = externalId
-            )
+            val link =
+                IdentityProviderLink(
+                    id = UUID.randomUUID(),
+                    userId = userId,
+                    identityProviderId = identityProviderId,
+                    externalId = externalId,
+                )
             identityProviderLinkRepository.persist(IdentityProviderLinkEntity.fromDomain(link))
         }
     }
 
     @Transactional
-    override fun delete(id: UUID): Boolean =
-        userRepository.deleteById(id)
+    override fun delete(id: UUID): Boolean = userRepository.deleteById(id)
 
-    override fun count(): Long =
-        userRepository.count()
+    override fun count(): Long = userRepository.count()
 }

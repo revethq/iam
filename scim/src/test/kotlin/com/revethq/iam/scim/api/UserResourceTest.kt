@@ -23,32 +23,35 @@ import kotlin.test.assertFailsWith
 import kotlin.test.assertNotNull
 
 class UserResourceTest {
-
     private val userService = mockk<UserService>(relaxed = true)
-    private val scimRequestContext = ScimRequestContext().apply {
-        identityProviderId = UUID.randomUUID()
-    }
-    private val uriInfo = mockk<UriInfo>().apply {
-        every { baseUri } returns URI.create("https://example.com/")
-    }
+    private val scimRequestContext =
+        ScimRequestContext().apply {
+            identityProviderId = UUID.randomUUID()
+        }
+    private val uriInfo =
+        mockk<UriInfo>().apply {
+            every { baseUri } returns URI.create("https://example.com/")
+        }
 
-    private val userResource = UserResource().apply {
-        this.userService = this@UserResourceTest.userService
-        this.scimRequestContext = this@UserResourceTest.scimRequestContext
-        this.uriInfo = this@UserResourceTest.uriInfo
-    }
+    private val userResource =
+        UserResource().apply {
+            this.userService = this@UserResourceTest.userService
+            this.scimRequestContext = this@UserResourceTest.scimRequestContext
+            this.uriInfo = this@UserResourceTest.uriInfo
+        }
 
     @Test
     fun `createUser returns 201 with created user`() {
-        val scimUser = ScimUser(
-            userName = "newuser",
-            emails = listOf(ScimEmail(value = "new@example.com", primary = true))
-        )
+        val scimUser =
+            ScimUser(
+                userName = "newuser",
+                emails = listOf(ScimEmail(value = "new@example.com", primary = true)),
+            )
         every { userService.findByUsername("newuser") } returns null
         every { userService.create(any(), any(), any()) } answers {
             firstArg<User>().copy(
                 createdOn = OffsetDateTime.now(),
-                updatedOn = OffsetDateTime.now()
+                updatedOn = OffsetDateTime.now(),
             )
         }
 
@@ -61,10 +64,11 @@ class UserResourceTest {
 
     @Test
     fun `createUser throws conflict when username exists`() {
-        val scimUser = ScimUser(
-            userName = "existing",
-            emails = listOf(ScimEmail(value = "test@example.com", primary = true))
-        )
+        val scimUser =
+            ScimUser(
+                userName = "existing",
+                emails = listOf(ScimEmail(value = "test@example.com", primary = true)),
+            )
         every { userService.findByUsername("existing") } returns createUser("existing")
 
         assertFailsWith<ScimConflictException> {
@@ -74,11 +78,12 @@ class UserResourceTest {
 
     @Test
     fun `createUser throws conflict when externalId exists`() {
-        val scimUser = ScimUser(
-            userName = "newuser",
-            externalId = "existing-ext-id",
-            emails = listOf(ScimEmail(value = "test@example.com", primary = true))
-        )
+        val scimUser =
+            ScimUser(
+                userName = "newuser",
+                externalId = "existing-ext-id",
+                emails = listOf(ScimEmail(value = "test@example.com", primary = true)),
+            )
         every { userService.findByUsername("newuser") } returns null
         every { userService.findByExternalId("existing-ext-id", any()) } returns createUser("other")
 
@@ -89,10 +94,11 @@ class UserResourceTest {
 
     @Test
     fun `listUsers returns paginated results`() {
-        val users = listOf(
-            createUser("user1"),
-            createUser("user2")
-        )
+        val users =
+            listOf(
+                createUser("user1"),
+                createUser("user2"),
+            )
         every { userService.list(any(), any()) } returns Page(users, 2L, 0, 100)
         every { userService.getExternalId(any(), any()) } returns null
 
@@ -130,10 +136,11 @@ class UserResourceTest {
     fun `replaceUser updates existing user`() {
         val userId = UUID.randomUUID()
         val existingUser = createUser("oldname", userId)
-        val scimUser = ScimUser(
-            userName = "newname",
-            emails = listOf(ScimEmail(value = "new@example.com", primary = true))
-        )
+        val scimUser =
+            ScimUser(
+                userName = "newname",
+                emails = listOf(ScimEmail(value = "new@example.com", primary = true)),
+            )
 
         every { userService.findById(userId) } returns existingUser
         every { userService.update(any()) } answers { firstArg() }
@@ -159,11 +166,13 @@ class UserResourceTest {
     fun `patchUser updates username`() {
         val userId = UUID.randomUUID()
         val existingUser = createUser("oldname", userId)
-        val patchOp = ScimPatchOp(
-            operations = listOf(
-                ScimPatchOperation(op = "replace", path = "userName", value = "newname")
+        val patchOp =
+            ScimPatchOp(
+                operations =
+                    listOf(
+                        ScimPatchOperation(op = "replace", path = "userName", value = "newname"),
+                    ),
             )
-        )
 
         every { userService.findById(userId) } returns existingUser
         every { userService.getExternalId(userId, any()) } returns null
@@ -178,11 +187,13 @@ class UserResourceTest {
     fun `patchUser updates active status`() {
         val userId = UUID.randomUUID()
         val existingUser = createUser("testuser", userId)
-        val patchOp = ScimPatchOp(
-            operations = listOf(
-                ScimPatchOperation(op = "replace", path = "active", value = false)
+        val patchOp =
+            ScimPatchOp(
+                operations =
+                    listOf(
+                        ScimPatchOperation(op = "replace", path = "active", value = false),
+                    ),
             )
-        )
 
         every { userService.findById(userId) } returns existingUser
         every { userService.getExternalId(userId, any()) } returns null
@@ -213,14 +224,16 @@ class UserResourceTest {
         }
     }
 
-    private fun createUser(username: String, id: UUID = UUID.randomUUID()): User {
-        return User(
+    private fun createUser(
+        username: String,
+        id: UUID = UUID.randomUUID(),
+    ): User =
+        User(
             id = id,
             username = username,
             email = "$username@example.com",
             metadata = Metadata(properties = mapOf("active" to true)),
             createdOn = OffsetDateTime.now(),
-            updatedOn = OffsetDateTime.now()
+            updatedOn = OffsetDateTime.now(),
         )
-    }
 }

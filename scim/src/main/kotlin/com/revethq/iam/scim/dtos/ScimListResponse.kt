@@ -10,7 +10,7 @@ data class ScimListResponse<T>(
     val startIndex: Int,
     val itemsPerPage: Int,
     @get:JsonbProperty("Resources")
-    val resources: List<T>
+    val resources: List<T>,
 ) {
     companion object {
         const val SCHEMA_LIST_RESPONSE = "urn:ietf:params:scim:api:messages:2.0:ListResponse"

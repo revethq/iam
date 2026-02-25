@@ -11,8 +11,7 @@ data class ServiceAccount(
     var tenantId: String? = null,
     var metadata: Metadata = Metadata(),
     var createdOn: OffsetDateTime? = null,
-    var updatedOn: OffsetDateTime? = null
+    var updatedOn: OffsetDateTime? = null,
 ) {
-    fun toUrn(): String =
-        "urn:revet:iam:${tenantId.orEmpty()}:service-account/$id"
+    fun toUrn(): String = "urn:revet:iam:${tenantId.orEmpty()}:service-account/$id"
 }

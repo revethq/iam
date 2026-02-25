@@ -10,5 +10,5 @@ data class User(
     var email: String,
     var metadata: Metadata = Metadata(),
     var createdOn: OffsetDateTime? = null,
-    var updatedOn: OffsetDateTime? = null
+    var updatedOn: OffsetDateTime? = null,
 )

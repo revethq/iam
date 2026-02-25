@@ -6,5 +6,5 @@ import io.quarkus.runtime.annotations.RegisterForReflection
 data class ScimEmail(
     val value: String,
     val type: String? = null,
-    val primary: Boolean = false
+    val primary: Boolean = false,
 )

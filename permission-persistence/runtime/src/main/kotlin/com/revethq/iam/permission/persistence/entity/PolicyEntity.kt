@@ -17,7 +17,6 @@ import java.util.UUID
 @Entity
 @Table(name = "revet_policies")
 open class PolicyEntity {
-
     @Id
     lateinit var id: UUID
 
@@ -47,36 +46,38 @@ open class PolicyEntity {
     @Column(name = "updated_on", nullable = false)
     lateinit var updatedOn: OffsetDateTime
 
-    fun toDomain(): Policy = Policy(
-        id = id,
-        name = name,
-        description = description,
-        version = version,
-        statements = parseStatements(statementsJson),
-        tenantId = tenantId,
-        metadata = metadata,
-        createdOn = createdOn,
-        updatedOn = updatedOn
-    )
+    fun toDomain(): Policy =
+        Policy(
+            id = id,
+            name = name,
+            description = description,
+            version = version,
+            statements = parseStatements(statementsJson),
+            tenantId = tenantId,
+            metadata = metadata,
+            createdOn = createdOn,
+            updatedOn = updatedOn,
+        )
 
     companion object {
         private val objectMapper = jacksonObjectMapper()
 
-        fun fromDomain(policy: Policy): PolicyEntity = PolicyEntity().apply {
-            val now = OffsetDateTime.now()
-            id = policy.id
-            name = policy.name
-            description = policy.description
-            version = policy.version
-            statementsJson = serializeStatements(policy.statements)
-            tenantId = policy.tenantId
-            metadata = policy.metadata
-            createdOn = policy.createdOn ?: now
-            updatedOn = policy.updatedOn ?: now
-        }
+        fun fromDomain(policy: Policy): PolicyEntity =
+            PolicyEntity().apply {
+                val now = OffsetDateTime.now()
+                id = policy.id
+                name = policy.name
+                description = policy.description
+                version = policy.version
+                statementsJson = serializeStatements(policy.statements)
+                tenantId = policy.tenantId
+                metadata = policy.metadata
+                createdOn = policy.createdOn ?: now
+                updatedOn = policy.updatedOn ?: now
+            }
 
-        private fun serializeStatements(statements: List<Statement>): List<Map<String, Any>> {
-            return statements.map { statement ->
+        private fun serializeStatements(statements: List<Statement>): List<Map<String, Any>> =
+            statements.map { statement ->
                 buildMap {
                     statement.sid?.let { put("sid", it) }
                     put("effect", statement.effect.name)
@@ -87,19 +88,17 @@ open class PolicyEntity {
                     }
                 }
             }
-        }
 
         @Suppress("UNCHECKED_CAST")
-        private fun parseStatements(statementsJson: List<Map<String, Any>>): List<Statement> {
-            return statementsJson.map { statementMap ->
+        private fun parseStatements(statementsJson: List<Map<String, Any>>): List<Statement> =
+            statementsJson.map { statementMap ->
                 Statement(
                     sid = statementMap["sid"] as? String,
                     effect = Effect.valueOf(statementMap["effect"] as String),
                     actions = statementMap["actions"] as List<String>,
                     resources = statementMap["resources"] as List<String>,
-                    conditions = (statementMap["conditions"] as? Map<String, Map<String, List<String>>>) ?: emptyMap()
+                    conditions = (statementMap["conditions"] as? Map<String, Map<String, List<String>>>) ?: emptyMap(),
                 )
             }
-        }
     }
 }

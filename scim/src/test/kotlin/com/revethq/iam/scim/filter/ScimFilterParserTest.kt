@@ -9,7 +9,6 @@ import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
 class ScimFilterParserTest {
-
     @Test
     fun `parse returns null for null input`() {
         assertNull(ScimFilterParser.parse(null))
@@ -110,11 +109,13 @@ class ScimFilterParserTest {
     @Test
     fun `EqFilter matches nested attribute in list`() {
         val filter = EqFilter("emails.value", "john@example.com")
-        val attributes = mapOf<String, Any?>(
-            "emails" to listOf(
-                mapOf("value" to "john@example.com", "primary" to true)
+        val attributes =
+            mapOf<String, Any?>(
+                "emails" to
+                    listOf(
+                        mapOf("value" to "john@example.com", "primary" to true),
+                    ),
             )
-        )
 
         assertTrue(filter.matches(attributes))
     }

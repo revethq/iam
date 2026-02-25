@@ -14,7 +14,6 @@ import java.util.UUID
 @Entity
 @Table(name = "revet_groups")
 open class GroupEntity {
-
     @Id
     lateinit var id: UUID
 
@@ -34,24 +33,26 @@ open class GroupEntity {
     @Column(name = "updated_on", nullable = false)
     lateinit var updatedOn: OffsetDateTime
 
-    fun toDomain(): Group = Group(
-        id = id,
-        displayName = displayName,
-        externalId = externalId,
-        metadata = metadata,
-        createdOn = createdOn,
-        updatedOn = updatedOn
-    )
+    fun toDomain(): Group =
+        Group(
+            id = id,
+            displayName = displayName,
+            externalId = externalId,
+            metadata = metadata,
+            createdOn = createdOn,
+            updatedOn = updatedOn,
+        )
 
     companion object {
-        fun fromDomain(group: Group): GroupEntity = GroupEntity().apply {
-            val now = OffsetDateTime.now()
-            id = group.id
-            displayName = group.displayName
-            externalId = group.externalId
-            metadata = group.metadata
-            createdOn = group.createdOn ?: now
-            updatedOn = group.updatedOn ?: now
-        }
+        fun fromDomain(group: Group): GroupEntity =
+            GroupEntity().apply {
+                val now = OffsetDateTime.now()
+                id = group.id
+                displayName = group.displayName
+                externalId = group.externalId
+                metadata = group.metadata
+                createdOn = group.createdOn ?: now
+                updatedOn = group.updatedOn ?: now
+            }
     }
 }

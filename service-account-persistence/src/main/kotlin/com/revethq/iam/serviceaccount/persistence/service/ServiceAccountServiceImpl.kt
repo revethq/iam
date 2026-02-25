@@ -11,9 +11,8 @@ import java.util.UUID
 
 @ApplicationScoped
 class ServiceAccountServiceImpl(
-    private val serviceAccountRepository: ServiceAccountRepository
+    private val serviceAccountRepository: ServiceAccountRepository,
 ) : ServiceAccountService {
-
     @Transactional
     override fun create(serviceAccount: ServiceAccount): ServiceAccount {
         val entity = ServiceAccountEntity.fromDomain(serviceAccount)
@@ -21,26 +20,31 @@ class ServiceAccountServiceImpl(
         return entity.toDomain()
     }
 
-    override fun findById(id: UUID): ServiceAccount? =
-        serviceAccountRepository.findById(id)?.toDomain()
+    override fun findById(id: UUID): ServiceAccount? = serviceAccountRepository.findById(id)?.toDomain()
 
-    override fun list(startIndex: Int, count: Int): Page<ServiceAccount> {
+    override fun list(
+        startIndex: Int,
+        count: Int,
+    ): Page<ServiceAccount> {
         val total = serviceAccountRepository.count()
-        val entities = serviceAccountRepository.findAll()
-            .page(startIndex / count, count)
-            .list()
+        val entities =
+            serviceAccountRepository
+                .findAll()
+                .page(startIndex / count, count)
+                .list()
         return Page(
             items = entities.map { it.toDomain() },
             totalCount = total,
             startIndex = startIndex,
-            itemsPerPage = count
+            itemsPerPage = count,
         )
     }
 
     @Transactional
     override fun update(serviceAccount: ServiceAccount): ServiceAccount {
-        val existing = serviceAccountRepository.findById(serviceAccount.id)
-            ?: throw IllegalArgumentException("ServiceAccount not found: ${serviceAccount.id}")
+        val existing =
+            serviceAccountRepository.findById(serviceAccount.id)
+                ?: throw IllegalArgumentException("ServiceAccount not found: ${serviceAccount.id}")
         existing.name = serviceAccount.name
         existing.description = serviceAccount.description
         existing.tenantId = serviceAccount.tenantId
@@ -50,9 +54,7 @@ class ServiceAccountServiceImpl(
     }
 
     @Transactional
-    override fun delete(id: UUID): Boolean =
-        serviceAccountRepository.deleteById(id)
+    override fun delete(id: UUID): Boolean = serviceAccountRepository.deleteById(id)
 
-    override fun count(): Long =
-        serviceAccountRepository.count()
+    override fun count(): Long = serviceAccountRepository.count()
 }

@@ -9,5 +9,5 @@ data class ScimMeta(
     val created: OffsetDateTime? = null,
     val lastModified: OffsetDateTime? = null,
     val location: String? = null,
-    val version: String? = null
+    val version: String? = null,
 )

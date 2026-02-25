@@ -27,18 +27,19 @@ import kotlin.test.assertFailsWith
 import kotlin.test.assertNotNull
 
 class GroupResourceTest {
-
     private val groupService = mockk<GroupService>(relaxed = true)
     private val userService = mockk<UserService>(relaxed = true)
-    private val uriInfo = mockk<UriInfo>().apply {
-        every { baseUri } returns URI.create("https://example.com/")
-    }
+    private val uriInfo =
+        mockk<UriInfo>().apply {
+            every { baseUri } returns URI.create("https://example.com/")
+        }
 
-    private val groupResource = GroupResource().apply {
-        this.groupService = this@GroupResourceTest.groupService
-        this.userService = this@GroupResourceTest.userService
-        this.uriInfo = this@GroupResourceTest.uriInfo
-    }
+    private val groupResource =
+        GroupResource().apply {
+            this.groupService = this@GroupResourceTest.groupService
+            this.userService = this@GroupResourceTest.userService
+            this.uriInfo = this@GroupResourceTest.uriInfo
+        }
 
     @Test
     fun `createGroup returns 201 with created group`() {
@@ -47,7 +48,7 @@ class GroupResourceTest {
         every { groupService.create(any()) } answers {
             firstArg<Group>().copy(
                 createdOn = OffsetDateTime.now(),
-                updatedOn = OffsetDateTime.now()
+                updatedOn = OffsetDateTime.now(),
             )
         }
 
@@ -82,15 +83,16 @@ class GroupResourceTest {
     @Test
     fun `createGroup with members adds members`() {
         val memberId = UUID.randomUUID()
-        val scimGroup = ScimGroup(
-            displayName = "Group with Members",
-            members = listOf(ScimMember(value = memberId.toString(), type = "User"))
-        )
+        val scimGroup =
+            ScimGroup(
+                displayName = "Group with Members",
+                members = listOf(ScimMember(value = memberId.toString(), type = "User")),
+            )
         every { groupService.findByDisplayName(any()) } returns null
         every { groupService.create(any()) } answers {
             firstArg<Group>().copy(
                 createdOn = OffsetDateTime.now(),
-                updatedOn = OffsetDateTime.now()
+                updatedOn = OffsetDateTime.now(),
             )
         }
         every { groupService.addMember(any(), any()) } answers {
@@ -105,10 +107,11 @@ class GroupResourceTest {
 
     @Test
     fun `listGroups returns paginated results`() {
-        val groups = listOf(
-            createGroup("Group1"),
-            createGroup("Group2")
-        )
+        val groups =
+            listOf(
+                createGroup("Group1"),
+                createGroup("Group2"),
+            )
         every { groupService.list(any(), any()) } returns Page(groups, 2L, 0, 100)
         every { groupService.getMembers(any()) } returns emptyList()
 
@@ -124,9 +127,10 @@ class GroupResourceTest {
         val groupId = UUID.randomUUID()
         val memberId = UUID.randomUUID()
         val group = createGroup("Test Group", groupId)
-        val members = listOf(
-            GroupMember(id = UUID.randomUUID(), groupId = groupId, memberId = memberId, memberType = MemberType.USER)
-        )
+        val members =
+            listOf(
+                GroupMember(id = UUID.randomUUID(), groupId = groupId, memberId = memberId, memberType = MemberType.USER),
+            )
         val user = User(id = memberId, username = "memberuser", email = "member@example.com")
 
         every { groupService.findById(groupId) } returns group
@@ -156,10 +160,11 @@ class GroupResourceTest {
         val groupId = UUID.randomUUID()
         val memberId = UUID.randomUUID()
         val existingGroup = createGroup("Old Name", groupId)
-        val scimGroup = ScimGroup(
-            displayName = "New Name",
-            members = listOf(ScimMember(value = memberId.toString(), type = "User"))
-        )
+        val scimGroup =
+            ScimGroup(
+                displayName = "New Name",
+                members = listOf(ScimMember(value = memberId.toString(), type = "User")),
+            )
 
         every { groupService.findById(groupId) } returns existingGroup
         every { groupService.update(any()) } answers { firstArg() }
@@ -190,11 +195,13 @@ class GroupResourceTest {
         val groupId = UUID.randomUUID()
         val existingGroup = createGroup("Old Name", groupId)
         val updatedGroup = createGroup("New Name", groupId)
-        val patchOp = ScimPatchOp(
-            operations = listOf(
-                ScimPatchOperation(op = "replace", path = "displayName", value = "New Name")
+        val patchOp =
+            ScimPatchOp(
+                operations =
+                    listOf(
+                        ScimPatchOperation(op = "replace", path = "displayName", value = "New Name"),
+                    ),
             )
-        )
 
         // First call returns existing, second call (after update) returns updated
         every { groupService.findById(groupId) } returnsMany listOf(existingGroup, updatedGroup)
@@ -211,15 +218,17 @@ class GroupResourceTest {
         val groupId = UUID.randomUUID()
         val memberId = UUID.randomUUID()
         val existingGroup = createGroup("Test Group", groupId)
-        val patchOp = ScimPatchOp(
-            operations = listOf(
-                ScimPatchOperation(
-                    op = "add",
-                    path = "members",
-                    value = listOf(mapOf("value" to memberId.toString()))
-                )
+        val patchOp =
+            ScimPatchOp(
+                operations =
+                    listOf(
+                        ScimPatchOperation(
+                            op = "add",
+                            path = "members",
+                            value = listOf(mapOf("value" to memberId.toString())),
+                        ),
+                    ),
             )
-        )
 
         every { groupService.findById(groupId) } returns existingGroup
         every { groupService.addMember(any(), any()) } answers {
@@ -237,14 +246,16 @@ class GroupResourceTest {
         val groupId = UUID.randomUUID()
         val memberId = UUID.randomUUID()
         val existingGroup = createGroup("Test Group", groupId)
-        val patchOp = ScimPatchOp(
-            operations = listOf(
-                ScimPatchOperation(
-                    op = "remove",
-                    path = "members[value eq \"$memberId\"]"
-                )
+        val patchOp =
+            ScimPatchOp(
+                operations =
+                    listOf(
+                        ScimPatchOperation(
+                            op = "remove",
+                            path = "members[value eq \"$memberId\"]",
+                        ),
+                    ),
             )
-        )
 
         every { groupService.findById(groupId) } returns existingGroup
         every { groupService.removeMember(groupId, memberId) } returns true
@@ -275,13 +286,15 @@ class GroupResourceTest {
         }
     }
 
-    private fun createGroup(displayName: String, id: UUID = UUID.randomUUID()): Group {
-        return Group(
+    private fun createGroup(
+        displayName: String,
+        id: UUID = UUID.randomUUID(),
+    ): Group =
+        Group(
             id = id,
             displayName = displayName,
             metadata = Metadata(),
             createdOn = OffsetDateTime.now(),
-            updatedOn = OffsetDateTime.now()
+            updatedOn = OffsetDateTime.now(),
         )
-    }
 }

@@ -1,9 +1,10 @@
 plugins {
-    kotlin("jvm") version "2.1.0" apply false
-    id("io.quarkus.extension") version "3.17.5" apply false
+    alias(libs.plugins.kotlin.jvm) apply false
+    alias(libs.plugins.quarkus.extension) apply false
+    alias(libs.plugins.ktlint) apply false
     base
     `maven-publish`
-    id("org.jreleaser") version "1.22.0"
+    alias(libs.plugins.jreleaser)
 }
 
 buildscript {
@@ -30,10 +31,11 @@ subprojects {
     apply(plugin = "org.jetbrains.kotlin.jvm")
     apply(plugin = "java-library")
     apply(plugin = "maven-publish")
+    apply(plugin = "org.jlleitschuh.gradle.ktlint")
 
     configure<JavaPluginExtension> {
         toolchain {
-            languageVersion.set(JavaLanguageVersion.of(21))
+            languageVersion.set(JavaLanguageVersion.of(25))
         }
         withJavadocJar()
         withSourcesJar()
@@ -41,7 +43,7 @@ subprojects {
 
     configure<org.jetbrains.kotlin.gradle.dsl.KotlinJvmProjectExtension> {
         compilerOptions {
-            jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_21)
+            jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_25)
         }
     }
 
@@ -50,6 +52,8 @@ subprojects {
     }
 
     dependencies {
+        // Version catalog type-safe accessors aren't available in subprojects {} blocks.
+        // revet-core version is defined in gradle/libs.versions.toml for reference.
         "api"("com.revethq:revet-core:0.1.0")
     }
 

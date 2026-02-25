@@ -5,7 +5,6 @@ import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 class ActionMatcherTest {
-
     @Test
     fun `exact action match`() {
         assertTrue(ActionMatcher.matches("iam:CreateUser", "iam:CreateUser"))

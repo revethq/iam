@@ -16,7 +16,6 @@ import java.util.UUID
 @Entity
 @Table(name = "revet_profiles")
 open class ProfileEntity {
-
     @Id
     lateinit var id: UUID
 
@@ -37,24 +36,26 @@ open class ProfileEntity {
     @Column(name = "updated_on", nullable = false)
     lateinit var updatedOn: OffsetDateTime
 
-    fun toDomain(): Profile = Profile(
-        id = id,
-        resource = resource,
-        profileType = profileType,
-        profile = profile,
-        createdOn = createdOn,
-        updatedOn = updatedOn
-    )
+    fun toDomain(): Profile =
+        Profile(
+            id = id,
+            resource = resource,
+            profileType = profileType,
+            profile = profile,
+            createdOn = createdOn,
+            updatedOn = updatedOn,
+        )
 
     companion object {
-        fun fromDomain(profile: Profile): ProfileEntity = ProfileEntity().apply {
-            val now = OffsetDateTime.now()
-            id = profile.id ?: UUID.randomUUID()
-            resource = profile.resource
-            profileType = profile.profileType ?: ProfileType.User
-            this.profile = profile.profile
-            createdOn = profile.createdOn ?: now
-            updatedOn = profile.updatedOn ?: now
-        }
+        fun fromDomain(profile: Profile): ProfileEntity =
+            ProfileEntity().apply {
+                val now = OffsetDateTime.now()
+                id = profile.id ?: UUID.randomUUID()
+                resource = profile.resource
+                profileType = profile.profileType ?: ProfileType.User
+                this.profile = profile.profile
+                createdOn = profile.createdOn ?: now
+                updatedOn = profile.updatedOn ?: now
+            }
     }
 }

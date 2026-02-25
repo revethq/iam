@@ -17,5 +17,5 @@ data class PolicyAttachment(
     var policyId: UUID,
     var principalUrn: String,
     var attachedOn: OffsetDateTime? = null,
-    var attachedBy: String? = null
+    var attachedBy: String? = null,
 )

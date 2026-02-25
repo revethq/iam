@@ -11,15 +11,31 @@ data class AttachedPolicy(
     val attachmentId: UUID,
     val policy: Policy,
     val attachedOn: java.time.OffsetDateTime?,
-    val attachedBy: String?
+    val attachedBy: String?,
 )
 
 interface PolicyAttachmentService {
-    fun attach(policyId: UUID, principalUrn: String, attachedBy: String? = null): PolicyAttachment
+    fun attach(
+        policyId: UUID,
+        principalUrn: String,
+        attachedBy: String? = null,
+    ): PolicyAttachment
+
     fun findById(attachmentId: UUID): PolicyAttachment?
-    fun detach(policyId: UUID, attachmentId: UUID): Boolean
+
+    fun detach(
+        policyId: UUID,
+        attachmentId: UUID,
+    ): Boolean
+
     fun listAttachmentsForPolicy(policyId: UUID): List<PolicyAttachment>
+
     fun listPoliciesForPrincipal(principalUrn: String): List<Policy>
+
     fun listAttachedPoliciesForPrincipal(principalUrn: String): List<AttachedPolicy>
-    fun isAttached(policyId: UUID, principalUrn: String): Boolean
+
+    fun isAttached(
+        policyId: UUID,
+        principalUrn: String,
+    ): Boolean
 }

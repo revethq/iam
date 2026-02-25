@@ -1,7 +1,7 @@
 package com.revethq.iam.permission.web.api
 
-import com.revethq.iam.permission.service.PolicyAttachmentService
 import com.revethq.iam.permission.persistence.service.PolicyService
+import com.revethq.iam.permission.service.PolicyAttachmentService
 import com.revethq.iam.permission.web.dto.AttachPolicyRequest
 import com.revethq.iam.permission.web.dto.CreatePolicyRequest
 import com.revethq.iam.permission.web.dto.PolicyAttachmentListResponse
@@ -32,7 +32,6 @@ import java.util.UUID
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 class PolicyResource {
-
     @Inject
     lateinit var policyService: PolicyService
 
@@ -48,17 +47,21 @@ class PolicyResource {
         val policy = request.toDomain()
         val created = policyService.create(policy)
 
-        return Response.status(Response.Status.CREATED)
+        return Response
+            .status(Response.Status.CREATED)
             .entity(PolicyResponse.fromDomain(created))
             .build()
     }
 
     @GET
     @Path("/{id}")
-    fun getPolicy(@PathParam("id") id: String): PolicyResponse {
+    fun getPolicy(
+        @PathParam("id") id: String,
+    ): PolicyResponse {
         val uuid = UUID.fromString(id)
-        val policy = policyService.findById(uuid)
-            ?: throw PolicyNotFoundException(id)
+        val policy =
+            policyService.findById(uuid)
+                ?: throw PolicyNotFoundException(id)
         return PolicyResponse.fromDomain(policy)
     }
 
@@ -66,14 +69,14 @@ class PolicyResource {
     fun listPolicies(
         @QueryParam("startIndex") @DefaultValue("0") startIndex: Int,
         @QueryParam("count") @DefaultValue("100") count: Int,
-        @QueryParam("tenantId") tenantId: String?
+        @QueryParam("tenantId") tenantId: String?,
     ): PolicyListResponse {
         val result = policyService.list(startIndex, count, tenantId)
         return PolicyListResponse(
             items = result.items.map { PolicyResponse.fromDomain(it) },
             totalCount = result.totalCount,
             startIndex = result.startIndex,
-            itemsPerPage = result.itemsPerPage
+            itemsPerPage = result.itemsPerPage,
         )
     }
 
@@ -81,19 +84,21 @@ class PolicyResource {
     @Path("/{id}")
     fun updatePolicy(
         @PathParam("id") id: String,
-        request: UpdatePolicyRequest
+        request: UpdatePolicyRequest,
     ): PolicyResponse {
         val uuid = UUID.fromString(id)
-        val existing = policyService.findById(uuid)
-            ?: throw PolicyNotFoundException(id)
+        val existing =
+            policyService.findById(uuid)
+                ?: throw PolicyNotFoundException(id)
 
-        val updated = existing.copy(
-            name = request.name,
-            description = request.description,
-            version = request.version,
-            statements = request.statements.map { it.toDomain() },
-            tenantId = request.tenantId
-        )
+        val updated =
+            existing.copy(
+                name = request.name,
+                description = request.description,
+                version = request.version,
+                statements = request.statements.map { it.toDomain() },
+                tenantId = request.tenantId,
+            )
 
         val saved = policyService.update(updated)
         return PolicyResponse.fromDomain(saved)
@@ -101,7 +106,9 @@ class PolicyResource {
 
     @DELETE
     @Path("/{id}")
-    fun deletePolicy(@PathParam("id") id: String): Response {
+    fun deletePolicy(
+        @PathParam("id") id: String,
+    ): Response {
         val uuid = UUID.fromString(id)
         if (!policyService.delete(uuid)) {
             throw PolicyNotFoundException(id)
@@ -113,14 +120,15 @@ class PolicyResource {
     @Path("/{id}/attachments")
     fun attachPolicy(
         @PathParam("id") id: String,
-        request: AttachPolicyRequest
+        request: AttachPolicyRequest,
     ): Response {
         val uuid = UUID.fromString(id)
         policyService.findById(uuid) ?: throw PolicyNotFoundException(id)
 
         try {
             val attachment = policyAttachmentService.attach(uuid, request.principalUrn)
-            return Response.status(Response.Status.CREATED)
+            return Response
+                .status(Response.Status.CREATED)
                 .entity(PolicyAttachmentResponse.fromDomain(attachment))
                 .build()
         } catch (e: IllegalStateException) {
@@ -132,7 +140,7 @@ class PolicyResource {
     @Path("/{id}/attachments/{attachmentId}")
     fun detachPolicy(
         @PathParam("id") id: String,
-        @PathParam("attachmentId") attachmentId: String
+        @PathParam("attachmentId") attachmentId: String,
     ): Response {
         val policyUuid = UUID.fromString(id)
         val attachmentUuid = UUID.fromString(attachmentId)
@@ -144,13 +152,15 @@ class PolicyResource {
 
     @GET
     @Path("/{id}/attachments")
-    fun listAttachments(@PathParam("id") id: String): PolicyAttachmentListResponse {
+    fun listAttachments(
+        @PathParam("id") id: String,
+    ): PolicyAttachmentListResponse {
         val uuid = UUID.fromString(id)
         policyService.findById(uuid) ?: throw PolicyNotFoundException(id)
 
         val attachments = policyAttachmentService.listAttachmentsForPolicy(uuid)
         return PolicyAttachmentListResponse(
-            items = attachments.map { PolicyAttachmentResponse.fromDomain(it) }
+            items = attachments.map { PolicyAttachmentResponse.fromDomain(it) },
         )
     }
 }

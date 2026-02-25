@@ -10,6 +10,7 @@ import com.revethq.iam.scim.mappers.toDomain
 import com.revethq.iam.scim.mappers.toScimUser
 import com.revethq.iam.scim.mappers.updateDomain
 import com.revethq.iam.user.persistence.service.UserService
+import io.quarkus.runtime.annotations.RegisterForReflection
 import jakarta.inject.Inject
 import jakarta.transaction.Transactional
 import jakarta.ws.rs.Consumes
@@ -35,7 +36,6 @@ import org.eclipse.microprofile.openapi.annotations.parameters.RequestBody
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponse
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponses
 import org.eclipse.microprofile.openapi.annotations.tags.Tag
-import io.quarkus.runtime.annotations.RegisterForReflection
 import java.util.UUID
 
 @ScimEndpoint
@@ -45,7 +45,6 @@ import java.util.UUID
 @Consumes(MediaType.APPLICATION_JSON)
 @Tag(name = "SCIM Users", description = "SCIM 2.0 User management endpoints")
 class UserResource {
-
     @Inject
     lateinit var userService: UserService
 
@@ -59,8 +58,9 @@ class UserResource {
         get() = uriInfo.baseUri.toString().removeSuffix("/")
 
     private val identityProviderId: UUID
-        get() = scimRequestContext.identityProviderId
-            ?: throw IllegalStateException("Identity provider ID not set in request context")
+        get() =
+            scimRequestContext.identityProviderId
+                ?: throw IllegalStateException("Identity provider ID not set in request context")
 
     @POST
     @Transactional
@@ -69,18 +69,18 @@ class UserResource {
         APIResponse(
             responseCode = "201",
             description = "User created successfully",
-            content = [Content(schema = Schema(implementation = ScimUser::class))]
+            content = [Content(schema = Schema(implementation = ScimUser::class))],
         ),
         APIResponse(responseCode = "400", description = "Invalid request"),
-        APIResponse(responseCode = "409", description = "User already exists")
+        APIResponse(responseCode = "409", description = "User already exists"),
     )
     fun createUser(
         @RequestBody(
             description = "User to create",
             required = true,
-            content = [Content(schema = Schema(implementation = ScimUser::class))]
+            content = [Content(schema = Schema(implementation = ScimUser::class))],
         )
-        scimUser: ScimUser
+        scimUser: ScimUser,
     ): Response {
         // Check for existing user by username
         userService.findByUsername(scimUser.userName)?.let {
@@ -97,7 +97,8 @@ class UserResource {
         val user = scimUser.toDomain()
         val created = userService.create(user, identityProviderId, scimUser.externalId)
 
-        return Response.status(201)
+        return Response
+            .status(201)
             .entity(created.toScimUser(baseUrl, scimUser.externalId))
             .build()
     }
@@ -107,43 +108,43 @@ class UserResource {
     @APIResponses(
         APIResponse(
             responseCode = "200",
-            description = "List of users"
+            description = "List of users",
         ),
-        APIResponse(responseCode = "400", description = "Invalid filter syntax")
+        APIResponse(responseCode = "400", description = "Invalid filter syntax"),
     )
     fun listUsers(
         @Parameter(description = "SCIM filter expression")
         @QueryParam("filter")
         filter: String?,
-
         @Parameter(description = "1-based start index for pagination")
         @QueryParam("startIndex")
         @DefaultValue("1")
         startIndex: Int,
-
         @Parameter(description = "Number of results per page")
         @QueryParam("count")
         @DefaultValue("100")
-        count: Int
+        count: Int,
     ): ScimListResponse<ScimUser> {
-        val result = ScimFilterHelper.filterUsers(
-            filterString = filter,
-            userService = userService,
-            identityProviderId = identityProviderId,
-            startIndex = startIndex - 1,
-            count = count
-        )
+        val result =
+            ScimFilterHelper.filterUsers(
+                filterString = filter,
+                userService = userService,
+                identityProviderId = identityProviderId,
+                startIndex = startIndex - 1,
+                count = count,
+            )
 
-        val scimUsers = result.items.map { user ->
-            val externalId = userService.getExternalId(user.id, identityProviderId)
-            user.toScimUser(baseUrl, externalId)
-        }
+        val scimUsers =
+            result.items.map { user ->
+                val externalId = userService.getExternalId(user.id, identityProviderId)
+                user.toScimUser(baseUrl, externalId)
+            }
 
         return ScimListResponse(
             totalResults = result.totalCount.toInt(),
             startIndex = startIndex,
             itemsPerPage = scimUsers.size,
-            resources = scimUsers
+            resources = scimUsers,
         )
     }
 
@@ -154,18 +155,19 @@ class UserResource {
         APIResponse(
             responseCode = "200",
             description = "User found",
-            content = [Content(schema = Schema(implementation = ScimUser::class))]
+            content = [Content(schema = Schema(implementation = ScimUser::class))],
         ),
-        APIResponse(responseCode = "404", description = "User not found")
+        APIResponse(responseCode = "404", description = "User not found"),
     )
     fun getUser(
         @Parameter(description = "User ID", required = true)
         @PathParam("id")
-        id: String
+        id: String,
     ): ScimUser {
         val uuid = UUID.fromString(id)
-        val user = userService.findById(uuid)
-            ?: throw ScimNotFoundException("User", id)
+        val user =
+            userService.findById(uuid)
+                ?: throw ScimNotFoundException("User", id)
         val externalId = userService.getExternalId(uuid, identityProviderId)
         return user.toScimUser(baseUrl, externalId)
     }
@@ -178,26 +180,26 @@ class UserResource {
         APIResponse(
             responseCode = "200",
             description = "User replaced successfully",
-            content = [Content(schema = Schema(implementation = ScimUser::class))]
+            content = [Content(schema = Schema(implementation = ScimUser::class))],
         ),
         APIResponse(responseCode = "400", description = "Invalid request"),
-        APIResponse(responseCode = "404", description = "User not found")
+        APIResponse(responseCode = "404", description = "User not found"),
     )
     fun replaceUser(
         @Parameter(description = "User ID", required = true)
         @PathParam("id")
         id: String,
-
         @RequestBody(
             description = "User data",
             required = true,
-            content = [Content(schema = Schema(implementation = ScimUser::class))]
+            content = [Content(schema = Schema(implementation = ScimUser::class))],
         )
-        scimUser: ScimUser
+        scimUser: ScimUser,
     ): ScimUser {
         val uuid = UUID.fromString(id)
-        val existing = userService.findById(uuid)
-            ?: throw ScimNotFoundException("User", id)
+        val existing =
+            userService.findById(uuid)
+                ?: throw ScimNotFoundException("User", id)
 
         val updated = scimUser.updateDomain(existing)
         val savedUser = userService.update(updated)
@@ -214,26 +216,26 @@ class UserResource {
         APIResponse(
             responseCode = "200",
             description = "User updated successfully",
-            content = [Content(schema = Schema(implementation = ScimUser::class))]
+            content = [Content(schema = Schema(implementation = ScimUser::class))],
         ),
         APIResponse(responseCode = "400", description = "Invalid patch operation"),
-        APIResponse(responseCode = "404", description = "User not found")
+        APIResponse(responseCode = "404", description = "User not found"),
     )
     fun patchUser(
         @Parameter(description = "User ID", required = true)
         @PathParam("id")
         id: String,
-
         @RequestBody(
             description = "Patch operations",
             required = true,
-            content = [Content(schema = Schema(implementation = ScimPatchOp::class))]
+            content = [Content(schema = Schema(implementation = ScimPatchOp::class))],
         )
-        patchOp: ScimPatchOp
+        patchOp: ScimPatchOp,
     ): ScimUser {
         val uuid = UUID.fromString(id)
-        val existing = userService.findById(uuid)
-            ?: throw ScimNotFoundException("User", id)
+        val existing =
+            userService.findById(uuid)
+                ?: throw ScimNotFoundException("User", id)
 
         var user = existing
         var newExternalId = userService.getExternalId(uuid, identityProviderId)
@@ -244,7 +246,10 @@ class UserResource {
                     when (operation.path?.lowercase()) {
                         "username" -> user = user.copy(username = operation.value.toString())
                         "active" -> {
-                            val props = user.metadata.properties.orEmpty().toMutableMap()
+                            val props =
+                                user.metadata.properties
+                                    .orEmpty()
+                                    .toMutableMap()
                             props["active"] = operation.value as Boolean
                             user = user.copy(metadata = user.metadata.copy(properties = props))
                         }
@@ -285,12 +290,12 @@ class UserResource {
     @Operation(summary = "Delete user", description = "Delete a SCIM user")
     @APIResponses(
         APIResponse(responseCode = "204", description = "User deleted successfully"),
-        APIResponse(responseCode = "404", description = "User not found")
+        APIResponse(responseCode = "404", description = "User not found"),
     )
     fun deleteUser(
         @Parameter(description = "User ID", required = true)
         @PathParam("id")
-        id: String
+        id: String,
     ): Response {
         val uuid = UUID.fromString(id)
         if (!userService.delete(uuid)) {

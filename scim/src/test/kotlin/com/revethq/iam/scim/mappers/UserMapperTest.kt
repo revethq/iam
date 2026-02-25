@@ -13,21 +13,21 @@ import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 
 class UserMapperTest {
-
     private val baseUrl = "https://example.com"
 
     @Test
     fun `toScimUser maps basic fields`() {
         val userId = UUID.randomUUID()
         val now = OffsetDateTime.now()
-        val user = User(
-            id = userId,
-            username = "john.doe",
-            email = "john@example.com",
-            metadata = Metadata(),
-            createdOn = now,
-            updatedOn = now
-        )
+        val user =
+            User(
+                id = userId,
+                username = "john.doe",
+                email = "john@example.com",
+                metadata = Metadata(),
+                createdOn = now,
+                updatedOn = now,
+            )
 
         val scimUser = user.toScimUser(baseUrl)
 
@@ -43,11 +43,12 @@ class UserMapperTest {
     @Test
     fun `toScimUser includes meta`() {
         val userId = UUID.randomUUID()
-        val user = User(
-            id = userId,
-            username = "john.doe",
-            email = "john@example.com"
-        )
+        val user =
+            User(
+                id = userId,
+                username = "john.doe",
+                email = "john@example.com",
+            )
 
         val scimUser = user.toScimUser(baseUrl)
 
@@ -58,18 +59,21 @@ class UserMapperTest {
 
     @Test
     fun `toScimUser maps properties to SCIM attributes`() {
-        val user = User(
-            id = UUID.randomUUID(),
-            username = "john.doe",
-            email = "john@example.com",
-            metadata = Metadata(
-                properties = mapOf(
-                    "displayName" to "John Doe",
-                    "active" to false,
-                    "locale" to "en-US"
-                )
+        val user =
+            User(
+                id = UUID.randomUUID(),
+                username = "john.doe",
+                email = "john@example.com",
+                metadata =
+                    Metadata(
+                        properties =
+                            mapOf(
+                                "displayName" to "John Doe",
+                                "active" to false,
+                                "locale" to "en-US",
+                            ),
+                    ),
             )
-        )
 
         val scimUser = user.toScimUser(baseUrl, "ext-123")
 
@@ -81,16 +85,18 @@ class UserMapperTest {
 
     @Test
     fun `toDomain creates User from ScimUser`() {
-        val scimUser = ScimUser(
-            userName = "jane.doe",
-            emails = listOf(
-                ScimEmail(value = "jane@example.com", primary = true)
-            ),
-            externalId = "ext-456",
-            displayName = "Jane Doe",
-            active = true,
-            locale = "en-GB"
-        )
+        val scimUser =
+            ScimUser(
+                userName = "jane.doe",
+                emails =
+                    listOf(
+                        ScimEmail(value = "jane@example.com", primary = true),
+                    ),
+                externalId = "ext-456",
+                displayName = "Jane Doe",
+                active = true,
+                locale = "en-GB",
+            )
 
         val user = scimUser.toDomain()
 
@@ -104,13 +110,15 @@ class UserMapperTest {
 
     @Test
     fun `toDomain uses primary email`() {
-        val scimUser = ScimUser(
-            userName = "test",
-            emails = listOf(
-                ScimEmail(value = "secondary@example.com", primary = false),
-                ScimEmail(value = "primary@example.com", primary = true)
+        val scimUser =
+            ScimUser(
+                userName = "test",
+                emails =
+                    listOf(
+                        ScimEmail(value = "secondary@example.com", primary = false),
+                        ScimEmail(value = "primary@example.com", primary = true),
+                    ),
             )
-        )
 
         val user = scimUser.toDomain()
 
@@ -119,13 +127,15 @@ class UserMapperTest {
 
     @Test
     fun `toDomain uses first email if no primary`() {
-        val scimUser = ScimUser(
-            userName = "test",
-            emails = listOf(
-                ScimEmail(value = "first@example.com", primary = false),
-                ScimEmail(value = "second@example.com", primary = false)
+        val scimUser =
+            ScimUser(
+                userName = "test",
+                emails =
+                    listOf(
+                        ScimEmail(value = "first@example.com", primary = false),
+                        ScimEmail(value = "second@example.com", primary = false),
+                    ),
             )
-        )
 
         val user = scimUser.toDomain()
 
@@ -134,10 +144,11 @@ class UserMapperTest {
 
     @Test
     fun `toDomain throws if no emails`() {
-        val scimUser = ScimUser(
-            userName = "test",
-            emails = null
-        )
+        val scimUser =
+            ScimUser(
+                userName = "test",
+                emails = null,
+            )
 
         assertFailsWith<IllegalArgumentException> {
             scimUser.toDomain()
@@ -147,11 +158,12 @@ class UserMapperTest {
     @Test
     fun `toDomain preserves id if provided`() {
         val existingId = UUID.randomUUID()
-        val scimUser = ScimUser(
-            id = existingId.toString(),
-            userName = "test",
-            emails = listOf(ScimEmail(value = "test@example.com", primary = true))
-        )
+        val scimUser =
+            ScimUser(
+                id = existingId.toString(),
+                userName = "test",
+                emails = listOf(ScimEmail(value = "test@example.com", primary = true)),
+            )
 
         val user = scimUser.toDomain()
 
@@ -160,20 +172,23 @@ class UserMapperTest {
 
     @Test
     fun `updateDomain updates existing user`() {
-        val existingUser = User(
-            id = UUID.randomUUID(),
-            username = "old.name",
-            email = "old@example.com",
-            metadata = Metadata(
-                properties = mapOf("existingProp" to "value")
+        val existingUser =
+            User(
+                id = UUID.randomUUID(),
+                username = "old.name",
+                email = "old@example.com",
+                metadata =
+                    Metadata(
+                        properties = mapOf("existingProp" to "value"),
+                    ),
             )
-        )
 
-        val scimUser = ScimUser(
-            userName = "new.name",
-            emails = listOf(ScimEmail(value = "new@example.com", primary = true)),
-            displayName = "New Name"
-        )
+        val scimUser =
+            ScimUser(
+                userName = "new.name",
+                emails = listOf(ScimEmail(value = "new@example.com", primary = true)),
+                displayName = "New Name",
+            )
 
         val updatedUser = scimUser.updateDomain(existingUser)
 

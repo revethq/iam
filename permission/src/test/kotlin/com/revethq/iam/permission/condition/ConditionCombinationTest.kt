@@ -5,53 +5,62 @@ import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 class ConditionCombinationTest {
-
     @Test
     fun `multiple conditions AND together - all pass`() {
-        val conditions = mapOf(
-            "StringEquals" to mapOf(
-                "revet:PrincipalId" to listOf("urn:revet:iam::user/alice")
-            ),
-            "IpAddress" to mapOf(
-                "revet:SourceIp" to listOf("10.0.0.0/8")
+        val conditions =
+            mapOf(
+                "StringEquals" to
+                    mapOf(
+                        "revet:PrincipalId" to listOf("urn:revet:iam::user/alice"),
+                    ),
+                "IpAddress" to
+                    mapOf(
+                        "revet:SourceIp" to listOf("10.0.0.0/8"),
+                    ),
             )
-        )
 
-        val context = ConditionContext(
-            principalId = "urn:revet:iam::user/alice",
-            sourceIp = "10.0.0.1"
-        )
+        val context =
+            ConditionContext(
+                principalId = "urn:revet:iam::user/alice",
+                sourceIp = "10.0.0.1",
+            )
 
         assertTrue(ConditionEvaluator.evaluate(conditions, context))
     }
 
     @Test
     fun `multiple conditions AND together - one fails`() {
-        val conditions = mapOf(
-            "StringEquals" to mapOf(
-                "revet:PrincipalId" to listOf("urn:revet:iam::user/alice")
-            ),
-            "IpAddress" to mapOf(
-                "revet:SourceIp" to listOf("10.0.0.0/8")
+        val conditions =
+            mapOf(
+                "StringEquals" to
+                    mapOf(
+                        "revet:PrincipalId" to listOf("urn:revet:iam::user/alice"),
+                    ),
+                "IpAddress" to
+                    mapOf(
+                        "revet:SourceIp" to listOf("10.0.0.0/8"),
+                    ),
             )
-        )
 
-        val context = ConditionContext(
-            principalId = "urn:revet:iam::user/alice",
-            sourceIp = "192.168.1.1"  // Not in 10.0.0.0/8
-        )
+        val context =
+            ConditionContext(
+                principalId = "urn:revet:iam::user/alice",
+                sourceIp = "192.168.1.1", // Not in 10.0.0.0/8
+            )
 
         assertFalse(ConditionEvaluator.evaluate(conditions, context))
     }
 
     @Test
     fun `multiple keys within same operator AND together`() {
-        val conditions = mapOf(
-            "StringEquals" to mapOf(
-                "revet:PrincipalId" to listOf("urn:revet:iam::user/alice"),
-                "revet:RequestedAction" to listOf("iam:GetUser")
+        val conditions =
+            mapOf(
+                "StringEquals" to
+                    mapOf(
+                        "revet:PrincipalId" to listOf("urn:revet:iam::user/alice"),
+                        "revet:RequestedAction" to listOf("iam:GetUser"),
+                    ),
             )
-        )
 
         // Both keys match
         assertTrue(
@@ -59,9 +68,9 @@ class ConditionCombinationTest {
                 conditions,
                 ConditionContext(
                     principalId = "urn:revet:iam::user/alice",
-                    requestedAction = "iam:GetUser"
-                )
-            )
+                    requestedAction = "iam:GetUser",
+                ),
+            ),
         )
 
         // First key matches, second doesn't
@@ -70,9 +79,9 @@ class ConditionCombinationTest {
                 conditions,
                 ConditionContext(
                     principalId = "urn:revet:iam::user/alice",
-                    requestedAction = "iam:DeleteUser"
-                )
-            )
+                    requestedAction = "iam:DeleteUser",
+                ),
+            ),
         )
 
         // First key doesn't match, second does
@@ -81,23 +90,26 @@ class ConditionCombinationTest {
                 conditions,
                 ConditionContext(
                     principalId = "urn:revet:iam::user/bob",
-                    requestedAction = "iam:GetUser"
-                )
-            )
+                    requestedAction = "iam:GetUser",
+                ),
+            ),
         )
     }
 
     @Test
     fun `multiple values for same key OR together - one matches`() {
-        val conditions = mapOf(
-            "StringEquals" to mapOf(
-                "revet:PrincipalId" to listOf(
-                    "urn:revet:iam::user/alice",
-                    "urn:revet:iam::user/bob",
-                    "urn:revet:iam::user/charlie"
-                )
+        val conditions =
+            mapOf(
+                "StringEquals" to
+                    mapOf(
+                        "revet:PrincipalId" to
+                            listOf(
+                                "urn:revet:iam::user/alice",
+                                "urn:revet:iam::user/bob",
+                                "urn:revet:iam::user/charlie",
+                            ),
+                    ),
             )
-        )
 
         assertTrue(ConditionEvaluator.evaluate(conditions, ConditionContext(principalId = "urn:revet:iam::user/alice")))
         assertTrue(ConditionEvaluator.evaluate(conditions, ConditionContext(principalId = "urn:revet:iam::user/bob")))
@@ -106,14 +118,17 @@ class ConditionCombinationTest {
 
     @Test
     fun `multiple values for same key OR together - none match`() {
-        val conditions = mapOf(
-            "StringEquals" to mapOf(
-                "revet:PrincipalId" to listOf(
-                    "urn:revet:iam::user/alice",
-                    "urn:revet:iam::user/bob"
-                )
+        val conditions =
+            mapOf(
+                "StringEquals" to
+                    mapOf(
+                        "revet:PrincipalId" to
+                            listOf(
+                                "urn:revet:iam::user/alice",
+                                "urn:revet:iam::user/bob",
+                            ),
+                    ),
             )
-        )
 
         assertFalse(ConditionEvaluator.evaluate(conditions, ConditionContext(principalId = "urn:revet:iam::user/david")))
     }
@@ -127,11 +142,13 @@ class ConditionCombinationTest {
 
     @Test
     fun `complex condition with variable resolution`() {
-        val conditions = mapOf(
-            "StringEquals" to mapOf(
-                "revet:PrincipalId" to listOf("\${revet:PrincipalId}")  // Self-referential for demo
+        val conditions =
+            mapOf(
+                "StringEquals" to
+                    mapOf(
+                        "revet:PrincipalId" to listOf("\${revet:PrincipalId}"), // Self-referential for demo
+                    ),
             )
-        )
 
         val context = ConditionContext(principalId = "urn:revet:iam::user/alice")
 
@@ -141,15 +158,18 @@ class ConditionCombinationTest {
 
     @Test
     fun `multiple IP address ranges OR together`() {
-        val conditions = mapOf(
-            "IpAddress" to mapOf(
-                "revet:SourceIp" to listOf(
-                    "10.0.0.0/8",
-                    "172.16.0.0/12",
-                    "192.168.0.0/16"
-                )
+        val conditions =
+            mapOf(
+                "IpAddress" to
+                    mapOf(
+                        "revet:SourceIp" to
+                            listOf(
+                                "10.0.0.0/8",
+                                "172.16.0.0/12",
+                                "192.168.0.0/16",
+                            ),
+                    ),
             )
-        )
 
         assertTrue(ConditionEvaluator.evaluate(conditions, ConditionContext(sourceIp = "10.0.0.1")))
         assertTrue(ConditionEvaluator.evaluate(conditions, ConditionContext(sourceIp = "172.16.0.1")))

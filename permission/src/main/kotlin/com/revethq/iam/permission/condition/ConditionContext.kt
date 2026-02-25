@@ -19,7 +19,7 @@ data class ConditionContext(
     val requestedAction: String? = null,
     val requestedResource: String? = null,
     val currentTime: OffsetDateTime = OffsetDateTime.now(),
-    val customVariables: Map<String, String> = emptyMap()
+    val customVariables: Map<String, String> = emptyMap(),
 ) {
     /**
      * Resolve a variable reference like ${revet:PrincipalId} to its actual value.
@@ -56,8 +56,8 @@ data class ConditionContext(
      * Get a value from the context by key name.
      * Used for condition evaluation when checking context keys.
      */
-    fun getValue(key: String): String? {
-        return when (key) {
+    fun getValue(key: String): String? =
+        when (key) {
             "revet:PrincipalId" -> principalId
             "revet:SourceIp" -> sourceIp
             "revet:RequestedAction" -> requestedAction
@@ -65,7 +65,6 @@ data class ConditionContext(
             "revet:CurrentTime" -> currentTime.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME)
             else -> customVariables[key]
         }
-    }
 
     /**
      * Check if a key exists in the context (has a non-null value).

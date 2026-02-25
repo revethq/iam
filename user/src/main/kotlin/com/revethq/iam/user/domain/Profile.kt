@@ -9,5 +9,5 @@ data class Profile(
     var profileType: ProfileType? = null,
     var profile: Map<String, Any>? = null,
     var createdOn: OffsetDateTime? = null,
-    var updatedOn: OffsetDateTime? = null
+    var updatedOn: OffsetDateTime? = null,
 )

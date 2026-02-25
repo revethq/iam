@@ -9,16 +9,16 @@ import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 
 class GroupMemberEntityTest {
-
     @Test
     fun `toDomain maps all fields correctly`() {
-        val entity = GroupMemberEntity().apply {
-            id = UUID.randomUUID()
-            groupId = UUID.randomUUID()
-            memberId = UUID.randomUUID()
-            memberType = MemberType.USER
-            createdOn = OffsetDateTime.now()
-        }
+        val entity =
+            GroupMemberEntity().apply {
+                id = UUID.randomUUID()
+                groupId = UUID.randomUUID()
+                memberId = UUID.randomUUID()
+                memberType = MemberType.USER
+                createdOn = OffsetDateTime.now()
+            }
 
         val domain = entity.toDomain()
 
@@ -31,13 +31,14 @@ class GroupMemberEntityTest {
 
     @Test
     fun `toDomain handles GROUP member type`() {
-        val entity = GroupMemberEntity().apply {
-            id = UUID.randomUUID()
-            groupId = UUID.randomUUID()
-            memberId = UUID.randomUUID()
-            memberType = MemberType.GROUP
-            createdOn = OffsetDateTime.now()
-        }
+        val entity =
+            GroupMemberEntity().apply {
+                id = UUID.randomUUID()
+                groupId = UUID.randomUUID()
+                memberId = UUID.randomUUID()
+                memberType = MemberType.GROUP
+                createdOn = OffsetDateTime.now()
+            }
 
         val domain = entity.toDomain()
 
@@ -47,13 +48,14 @@ class GroupMemberEntityTest {
     @Test
     fun `fromDomain maps all fields correctly`() {
         val now = OffsetDateTime.now()
-        val member = GroupMember(
-            id = UUID.randomUUID(),
-            groupId = UUID.randomUUID(),
-            memberId = UUID.randomUUID(),
-            memberType = MemberType.USER,
-            createdOn = now
-        )
+        val member =
+            GroupMember(
+                id = UUID.randomUUID(),
+                groupId = UUID.randomUUID(),
+                memberId = UUID.randomUUID(),
+                memberType = MemberType.USER,
+                createdOn = now,
+            )
 
         val entity = GroupMemberEntity.fromDomain(member)
 
@@ -66,13 +68,14 @@ class GroupMemberEntityTest {
 
     @Test
     fun `fromDomain generates id when null`() {
-        val member = GroupMember(
-            id = null,
-            groupId = UUID.randomUUID(),
-            memberId = UUID.randomUUID(),
-            memberType = MemberType.USER,
-            createdOn = null
-        )
+        val member =
+            GroupMember(
+                id = null,
+                groupId = UUID.randomUUID(),
+                memberId = UUID.randomUUID(),
+                memberType = MemberType.USER,
+                createdOn = null,
+            )
 
         val entity = GroupMemberEntity.fromDomain(member)
 
@@ -81,11 +84,12 @@ class GroupMemberEntityTest {
 
     @Test
     fun `fromDomain sets createdOn when null`() {
-        val member = GroupMember(
-            groupId = UUID.randomUUID(),
-            memberId = UUID.randomUUID(),
-            createdOn = null
-        )
+        val member =
+            GroupMember(
+                groupId = UUID.randomUUID(),
+                memberId = UUID.randomUUID(),
+                createdOn = null,
+            )
 
         val entity = GroupMemberEntity.fromDomain(member)
 
@@ -94,11 +98,12 @@ class GroupMemberEntityTest {
 
     @Test
     fun `fromDomain preserves GROUP member type`() {
-        val member = GroupMember(
-            groupId = UUID.randomUUID(),
-            memberId = UUID.randomUUID(),
-            memberType = MemberType.GROUP
-        )
+        val member =
+            GroupMember(
+                groupId = UUID.randomUUID(),
+                memberId = UUID.randomUUID(),
+                memberType = MemberType.GROUP,
+            )
 
         val entity = GroupMemberEntity.fromDomain(member)
 
@@ -107,10 +112,11 @@ class GroupMemberEntityTest {
 
     @Test
     fun `fromDomain defaults to USER member type`() {
-        val member = GroupMember(
-            groupId = UUID.randomUUID(),
-            memberId = UUID.randomUUID()
-        )
+        val member =
+            GroupMember(
+                groupId = UUID.randomUUID(),
+                memberId = UUID.randomUUID(),
+            )
 
         val entity = GroupMemberEntity.fromDomain(member)
 
@@ -119,13 +125,14 @@ class GroupMemberEntityTest {
 
     @Test
     fun `roundtrip preserves data`() {
-        val original = GroupMember(
-            id = UUID.randomUUID(),
-            groupId = UUID.randomUUID(),
-            memberId = UUID.randomUUID(),
-            memberType = MemberType.GROUP,
-            createdOn = OffsetDateTime.now().minusHours(5)
-        )
+        val original =
+            GroupMember(
+                id = UUID.randomUUID(),
+                groupId = UUID.randomUUID(),
+                memberId = UUID.randomUUID(),
+                memberType = MemberType.GROUP,
+                createdOn = OffsetDateTime.now().minusHours(5),
+            )
 
         val entity = GroupMemberEntity.fromDomain(original)
         val restored = entity.toDomain()

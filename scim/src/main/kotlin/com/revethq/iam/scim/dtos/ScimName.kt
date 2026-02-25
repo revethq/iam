@@ -9,5 +9,5 @@ data class ScimName(
     val givenName: String? = null,
     val middleName: String? = null,
     val honorificPrefix: String? = null,
-    val honorificSuffix: String? = null
+    val honorificSuffix: String? = null,
 )

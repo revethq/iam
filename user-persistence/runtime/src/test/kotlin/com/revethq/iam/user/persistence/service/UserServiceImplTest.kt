@@ -8,9 +8,7 @@ import com.revethq.iam.user.persistence.repository.IdentityProviderLinkRepositor
 import com.revethq.iam.user.persistence.repository.UserRepository
 import io.mockk.every
 import io.mockk.mockk
-import io.mockk.slot
 import io.mockk.verify
-import io.quarkus.hibernate.orm.panache.kotlin.PanacheQuery
 import java.time.OffsetDateTime
 import java.util.UUID
 import kotlin.test.Test
@@ -20,18 +18,18 @@ import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
 class UserServiceImplTest {
-
     private val userRepository = mockk<UserRepository>(relaxed = true)
     private val identityProviderLinkRepository = mockk<IdentityProviderLinkRepository>(relaxed = true)
     private val userService = UserServiceImpl(userRepository, identityProviderLinkRepository)
 
     @Test
     fun `create persists user and returns domain object`() {
-        val user = User(
-            id = UUID.randomUUID(),
-            username = "testuser",
-            email = "test@example.com"
-        )
+        val user =
+            User(
+                id = UUID.randomUUID(),
+                username = "testuser",
+                email = "test@example.com",
+            )
         val identityProviderId = UUID.randomUUID()
 
         val result = userService.create(user, identityProviderId, null)
@@ -43,11 +41,12 @@ class UserServiceImplTest {
 
     @Test
     fun `create with externalId creates identity provider link`() {
-        val user = User(
-            id = UUID.randomUUID(),
-            username = "testuser",
-            email = "test@example.com"
-        )
+        val user =
+            User(
+                id = UUID.randomUUID(),
+                username = "testuser",
+                email = "test@example.com",
+            )
         val identityProviderId = UUID.randomUUID()
         val externalId = "ext-123"
 
@@ -59,11 +58,12 @@ class UserServiceImplTest {
 
     @Test
     fun `create without externalId does not create link`() {
-        val user = User(
-            id = UUID.randomUUID(),
-            username = "testuser",
-            email = "test@example.com"
-        )
+        val user =
+            User(
+                id = UUID.randomUUID(),
+                username = "testuser",
+                email = "test@example.com",
+            )
         val identityProviderId = UUID.randomUUID()
 
         userService.create(user, identityProviderId, null)
@@ -181,12 +181,13 @@ class UserServiceImplTest {
         val existingEntity = createUserEntity(userId, "oldname", "old@example.com")
         every { userRepository.findById(userId) } returns existingEntity
 
-        val updatedUser = User(
-            id = userId,
-            username = "newname",
-            email = "new@example.com",
-            metadata = Metadata(properties = mapOf("key" to "value"))
-        )
+        val updatedUser =
+            User(
+                id = userId,
+                username = "newname",
+                email = "new@example.com",
+                metadata = Metadata(properties = mapOf("key" to "value")),
+            )
 
         val result = userService.update(updatedUser)
 
@@ -214,8 +215,12 @@ class UserServiceImplTest {
         assertEquals(42L, result)
     }
 
-    private fun createUserEntity(id: UUID, username: String, email: String): UserEntity {
-        return UserEntity().apply {
+    private fun createUserEntity(
+        id: UUID,
+        username: String,
+        email: String,
+    ): UserEntity =
+        UserEntity().apply {
             this.id = id
             this.username = username
             this.email = email
@@ -223,10 +228,13 @@ class UserServiceImplTest {
             this.createdOn = OffsetDateTime.now()
             this.updatedOn = OffsetDateTime.now()
         }
-    }
 
-    private fun createLinkEntity(userId: UUID, identityProviderId: UUID, externalId: String): IdentityProviderLinkEntity {
-        return IdentityProviderLinkEntity().apply {
+    private fun createLinkEntity(
+        userId: UUID,
+        identityProviderId: UUID,
+        externalId: String,
+    ): IdentityProviderLinkEntity =
+        IdentityProviderLinkEntity().apply {
             this.id = UUID.randomUUID()
             this.userId = userId
             this.identityProviderId = identityProviderId
@@ -235,5 +243,4 @@ class UserServiceImplTest {
             this.createdOn = OffsetDateTime.now()
             this.updatedOn = OffsetDateTime.now()
         }
-    }
 }

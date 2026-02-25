@@ -19,19 +19,20 @@ import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 class UserResourceTest {
-
     private val userService = mockk<UserService>(relaxed = true)
 
-    private val resource = UserResource().apply {
-        this.userService = this@UserResourceTest.userService
-    }
+    private val resource =
+        UserResource().apply {
+            this.userService = this@UserResourceTest.userService
+        }
 
     @Test
     fun `createUser returns 201 with created user`() {
-        val request = CreateUserRequest(
-            username = "alice",
-            email = "alice@example.com"
-        )
+        val request =
+            CreateUserRequest(
+                username = "alice",
+                email = "alice@example.com",
+            )
 
         every { userService.findByUsername("alice") } returns null
         every { userService.findByEmail("alice@example.com") } returns null
@@ -50,10 +51,11 @@ class UserResourceTest {
 
         every { userService.findByUsername("alice") } returns existingUser
 
-        val request = CreateUserRequest(
-            username = "alice",
-            email = "alice2@example.com"
-        )
+        val request =
+            CreateUserRequest(
+                username = "alice",
+                email = "alice2@example.com",
+            )
 
         assertFailsWith<UserConflictException> {
             resource.createUser(request, null)
@@ -65,10 +67,11 @@ class UserResourceTest {
         every { userService.findByUsername("bob") } returns null
         every { userService.findByEmail("alice@example.com") } returns createUser("alice")
 
-        val request = CreateUserRequest(
-            username = "bob",
-            email = "alice@example.com"
-        )
+        val request =
+            CreateUserRequest(
+                username = "bob",
+                email = "alice@example.com",
+            )
 
         assertFailsWith<UserConflictException> {
             resource.createUser(request, null)
@@ -129,10 +132,11 @@ class UserResourceTest {
         val existing = createUser("alice")
         every { userService.findById(existing.id) } returns existing
 
-        val request = UpdateUserRequest(
-            username = "alice-updated",
-            email = "alice-updated@example.com"
-        )
+        val request =
+            UpdateUserRequest(
+                username = "alice-updated",
+                email = "alice-updated@example.com",
+            )
 
         val userSlot = slot<User>()
         every { userService.update(capture(userSlot)) } answers { userSlot.captured }
@@ -148,10 +152,11 @@ class UserResourceTest {
         val id = UUID.randomUUID()
         every { userService.findById(id) } returns null
 
-        val request = UpdateUserRequest(
-            username = "alice",
-            email = "alice@example.com"
-        )
+        val request =
+            UpdateUserRequest(
+                username = "alice",
+                email = "alice@example.com",
+            )
 
         assertFailsWith<UserNotFoundException> {
             resource.updateUser(id.toString(), request)
@@ -178,9 +183,13 @@ class UserResourceTest {
         }
     }
 
-    private fun createUser(username: String, id: UUID = UUID.randomUUID()): User = User(
-        id = id,
-        username = username,
-        email = "$username@example.com"
-    )
+    private fun createUser(
+        username: String,
+        id: UUID = UUID.randomUUID(),
+    ): User =
+        User(
+            id = id,
+            username = username,
+            email = "$username@example.com",
+        )
 }

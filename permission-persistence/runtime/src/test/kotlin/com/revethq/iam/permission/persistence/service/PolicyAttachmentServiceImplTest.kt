@@ -21,7 +21,6 @@ import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 class PolicyAttachmentServiceImplTest {
-
     private val policyAttachmentRepository = mockk<PolicyAttachmentRepository>(relaxed = true)
     private val policyRepository = mockk<PolicyRepository>(relaxed = true)
     private val service = PolicyAttachmentServiceImpl(policyAttachmentRepository, policyRepository)
@@ -128,7 +127,7 @@ class PolicyAttachmentServiceImplTest {
 
     private fun createAttachmentEntity(
         policyId: UUID = this.policyId,
-        principalUrn: String = this.principalUrn
+        principalUrn: String = this.principalUrn,
     ) = PolicyAttachmentEntity().apply {
         id = UUID.randomUUID()
         this.policyId = policyId
@@ -136,15 +135,20 @@ class PolicyAttachmentServiceImplTest {
         attachedOn = OffsetDateTime.now()
     }
 
-    private fun createPolicyEntity(id: UUID, name: String): PolicyEntity {
-        val policy = Policy(
-            id = id,
-            name = name,
-            version = "2026-01-15",
-            statements = listOf(
-                Statement(effect = Effect.ALLOW, actions = listOf("iam:*"), resources = listOf("urn:revet:iam:*:*/*"))
+    private fun createPolicyEntity(
+        id: UUID,
+        name: String,
+    ): PolicyEntity {
+        val policy =
+            Policy(
+                id = id,
+                name = name,
+                version = "2026-01-15",
+                statements =
+                    listOf(
+                        Statement(effect = Effect.ALLOW, actions = listOf("iam:*"), resources = listOf("urn:revet:iam:*:*/*")),
+                    ),
             )
-        )
         return PolicyEntity.fromDomain(policy)
     }
 }

@@ -15,9 +15,8 @@ import java.util.UUID
 @ApplicationScoped
 class GroupServiceImpl(
     private val groupRepository: GroupRepository,
-    private val groupMemberRepository: GroupMemberRepository
+    private val groupMemberRepository: GroupMemberRepository,
 ) : GroupService {
-
     @Transactional
     override fun create(group: Group): Group {
         val entity = GroupEntity.fromDomain(group)
@@ -25,32 +24,35 @@ class GroupServiceImpl(
         return entity.toDomain()
     }
 
-    override fun findById(id: UUID): Group? =
-        groupRepository.findById(id)?.toDomain()
+    override fun findById(id: UUID): Group? = groupRepository.findById(id)?.toDomain()
 
-    override fun findByExternalId(externalId: String): Group? =
-        groupRepository.findByExternalId(externalId)?.toDomain()
+    override fun findByExternalId(externalId: String): Group? = groupRepository.findByExternalId(externalId)?.toDomain()
 
-    override fun findByDisplayName(displayName: String): Group? =
-        groupRepository.findByDisplayName(displayName)?.toDomain()
+    override fun findByDisplayName(displayName: String): Group? = groupRepository.findByDisplayName(displayName)?.toDomain()
 
-    override fun list(startIndex: Int, count: Int): Page<Group> {
+    override fun list(
+        startIndex: Int,
+        count: Int,
+    ): Page<Group> {
         val total = groupRepository.count()
-        val entities = groupRepository.findAll()
-            .page(startIndex / count, count)
-            .list()
+        val entities =
+            groupRepository
+                .findAll()
+                .page(startIndex / count, count)
+                .list()
         return Page(
             items = entities.map { it.toDomain() },
             totalCount = total,
             startIndex = startIndex,
-            itemsPerPage = count
+            itemsPerPage = count,
         )
     }
 
     @Transactional
     override fun update(group: Group): Group {
-        val existing = groupRepository.findById(group.id)
-            ?: throw IllegalArgumentException("Group not found: ${group.id}")
+        val existing =
+            groupRepository.findById(group.id)
+                ?: throw IllegalArgumentException("Group not found: ${group.id}")
         existing.displayName = group.displayName
         existing.externalId = group.externalId
         existing.metadata = group.metadata
@@ -64,14 +66,15 @@ class GroupServiceImpl(
         return groupRepository.deleteById(id)
     }
 
-    override fun count(): Long =
-        groupRepository.count()
+    override fun count(): Long = groupRepository.count()
 
-    override fun getMembers(groupId: UUID): List<GroupMember> =
-        groupMemberRepository.findByGroupId(groupId).map { it.toDomain() }
+    override fun getMembers(groupId: UUID): List<GroupMember> = groupMemberRepository.findByGroupId(groupId).map { it.toDomain() }
 
     @Transactional
-    override fun addMember(groupId: UUID, member: GroupMember): GroupMember {
+    override fun addMember(
+        groupId: UUID,
+        member: GroupMember,
+    ): GroupMember {
         val memberWithGroup = member.copy(groupId = groupId)
         val entity = GroupMemberEntity.fromDomain(memberWithGroup)
         groupMemberRepository.persist(entity)
@@ -79,15 +82,22 @@ class GroupServiceImpl(
     }
 
     @Transactional
-    override fun removeMember(groupId: UUID, memberId: UUID): Boolean {
-        val member = groupMemberRepository.findByGroupIdAndMemberId(groupId, memberId)
-            ?: return false
+    override fun removeMember(
+        groupId: UUID,
+        memberId: UUID,
+    ): Boolean {
+        val member =
+            groupMemberRepository.findByGroupIdAndMemberId(groupId, memberId)
+                ?: return false
         groupMemberRepository.delete(member)
         return true
     }
 
     @Transactional
-    override fun setMembers(groupId: UUID, members: List<GroupMember>): List<GroupMember> {
+    override fun setMembers(
+        groupId: UUID,
+        members: List<GroupMember>,
+    ): List<GroupMember> {
         groupMemberRepository.deleteByGroupId(groupId)
         return members.map { member ->
             val memberWithGroup = member.copy(groupId = groupId)

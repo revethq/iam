@@ -8,5 +8,5 @@ data class GroupMember(
     var groupId: UUID,
     var memberId: UUID,
     var memberType: MemberType = MemberType.USER,
-    var createdOn: OffsetDateTime? = null
+    var createdOn: OffsetDateTime? = null,
 )

@@ -7,7 +7,6 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.slot
 import io.mockk.verify
-import io.quarkus.hibernate.orm.panache.kotlin.PanacheQuery
 import java.util.UUID
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -17,18 +16,18 @@ import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
 class ServiceAccountServiceImplTest {
-
     private val repository = mockk<ServiceAccountRepository>(relaxed = true)
     private val service = ServiceAccountServiceImpl(repository)
 
     @Test
     fun `create persists entity and returns domain`() {
-        val sa = ServiceAccount(
-            id = UUID.randomUUID(),
-            name = "test-sa",
-            description = "desc",
-            tenantId = "t1"
-        )
+        val sa =
+            ServiceAccount(
+                id = UUID.randomUUID(),
+                name = "test-sa",
+                description = "desc",
+                tenantId = "t1",
+            )
 
         val entitySlot = slot<ServiceAccountEntity>()
         every { repository.persist(capture(entitySlot)) } answers { }
@@ -47,9 +46,10 @@ class ServiceAccountServiceImplTest {
     @Test
     fun `findById returns domain when found`() {
         val id = UUID.randomUUID()
-        val entity = ServiceAccountEntity.fromDomain(
-            ServiceAccount(id = id, name = "found-sa")
-        )
+        val entity =
+            ServiceAccountEntity.fromDomain(
+                ServiceAccount(id = id, name = "found-sa"),
+            )
         every { repository.findById(id) } returns entity
 
         val result = service.findById(id)

@@ -23,7 +23,6 @@ import java.util.UUID
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 class ServiceAccountProfileResource {
-
     @Inject
     lateinit var serviceAccountService: ServiceAccountService
 
@@ -32,15 +31,19 @@ class ServiceAccountProfileResource {
 
     @GET
     @Path("/{id}/profile")
-    fun getProfile(@PathParam("id") id: String): Response {
+    fun getProfile(
+        @PathParam("id") id: String,
+    ): Response {
         val uuid = UUID.fromString(id)
         serviceAccountService.findById(uuid)
             ?: throw ServiceAccountNotFoundException(id)
 
-        val profileEntity = profileRepository.findByResourceAndProfileType(uuid, ProfileType.ServiceAccount)
-            ?: return Response.status(Response.Status.NOT_FOUND)
-                .entity(mapOf("error" to "Profile not found for service account: $id"))
-                .build()
+        val profileEntity =
+            profileRepository.findByResourceAndProfileType(uuid, ProfileType.ServiceAccount)
+                ?: return Response
+                    .status(Response.Status.NOT_FOUND)
+                    .entity(mapOf("error" to "Profile not found for service account: $id"))
+                    .build()
 
         return Response.ok(profileEntity.toDomain().profile).build()
     }
@@ -50,7 +53,7 @@ class ServiceAccountProfileResource {
     @Transactional
     fun setProfile(
         @PathParam("id") id: String,
-        profile: Map<String, Any>
+        profile: Map<String, Any>,
     ): Response {
         val uuid = UUID.fromString(id)
         serviceAccountService.findById(uuid)
@@ -64,15 +67,17 @@ class ServiceAccountProfileResource {
             return Response.ok(existing.toDomain().profile).build()
         }
 
-        val newProfile = Profile(
-            resource = uuid,
-            profileType = ProfileType.ServiceAccount,
-            profile = profile
-        )
+        val newProfile =
+            Profile(
+                resource = uuid,
+                profileType = ProfileType.ServiceAccount,
+                profile = profile,
+            )
         val entity = ProfileEntity.fromDomain(newProfile)
         profileRepository.persist(entity)
 
-        return Response.status(Response.Status.CREATED)
+        return Response
+            .status(Response.Status.CREATED)
             .entity(entity.toDomain().profile)
             .build()
     }

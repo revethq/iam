@@ -7,7 +7,7 @@ import com.revethq.iam.permission.domain.Statement
  */
 enum class AuthorizationDecision {
     ALLOW,
-    DENY
+    DENY,
 }
 
 /**
@@ -20,7 +20,7 @@ enum class AuthorizationDecision {
 data class AuthorizationResult(
     val decision: AuthorizationDecision,
     val matchingStatements: List<MatchedStatement> = emptyList(),
-    val isExplicitDeny: Boolean = false
+    val isExplicitDeny: Boolean = false,
 ) {
     /**
      * Check if access is allowed.
@@ -36,29 +36,32 @@ data class AuthorizationResult(
         /**
          * Create an implicit deny result (no matching statements).
          */
-        fun implicitDeny(): AuthorizationResult = AuthorizationResult(
-            decision = AuthorizationDecision.DENY,
-            matchingStatements = emptyList(),
-            isExplicitDeny = false
-        )
+        fun implicitDeny(): AuthorizationResult =
+            AuthorizationResult(
+                decision = AuthorizationDecision.DENY,
+                matchingStatements = emptyList(),
+                isExplicitDeny = false,
+            )
 
         /**
          * Create an explicit deny result.
          */
-        fun explicitDeny(matchingStatements: List<MatchedStatement>): AuthorizationResult = AuthorizationResult(
-            decision = AuthorizationDecision.DENY,
-            matchingStatements = matchingStatements,
-            isExplicitDeny = true
-        )
+        fun explicitDeny(matchingStatements: List<MatchedStatement>): AuthorizationResult =
+            AuthorizationResult(
+                decision = AuthorizationDecision.DENY,
+                matchingStatements = matchingStatements,
+                isExplicitDeny = true,
+            )
 
         /**
          * Create an allow result.
          */
-        fun allow(matchingStatements: List<MatchedStatement>): AuthorizationResult = AuthorizationResult(
-            decision = AuthorizationDecision.ALLOW,
-            matchingStatements = matchingStatements,
-            isExplicitDeny = false
-        )
+        fun allow(matchingStatements: List<MatchedStatement>): AuthorizationResult =
+            AuthorizationResult(
+                decision = AuthorizationDecision.ALLOW,
+                matchingStatements = matchingStatements,
+                isExplicitDeny = false,
+            )
     }
 }
 
@@ -70,5 +73,5 @@ data class AuthorizationResult(
  */
 data class MatchedStatement(
     val statement: Statement,
-    val policyName: String
+    val policyName: String,
 )

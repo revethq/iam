@@ -11,7 +11,6 @@ import java.util.UUID
 @Entity
 @Table(name = "revet_policy_attachments")
 open class PolicyAttachmentEntity {
-
     @Id
     lateinit var id: UUID
 
@@ -27,22 +26,24 @@ open class PolicyAttachmentEntity {
     @Column(name = "attached_by")
     var attachedBy: String? = null
 
-    fun toDomain(): PolicyAttachment = PolicyAttachment(
-        id = id,
-        policyId = policyId,
-        principalUrn = principalUrn,
-        attachedOn = attachedOn,
-        attachedBy = attachedBy
-    )
+    fun toDomain(): PolicyAttachment =
+        PolicyAttachment(
+            id = id,
+            policyId = policyId,
+            principalUrn = principalUrn,
+            attachedOn = attachedOn,
+            attachedBy = attachedBy,
+        )
 
     companion object {
-        fun fromDomain(attachment: PolicyAttachment): PolicyAttachmentEntity = PolicyAttachmentEntity().apply {
-            val now = OffsetDateTime.now()
-            id = attachment.id
-            policyId = attachment.policyId
-            principalUrn = attachment.principalUrn
-            attachedOn = attachment.attachedOn ?: now
-            attachedBy = attachment.attachedBy
-        }
+        fun fromDomain(attachment: PolicyAttachment): PolicyAttachmentEntity =
+            PolicyAttachmentEntity().apply {
+                val now = OffsetDateTime.now()
+                id = attachment.id
+                policyId = attachment.policyId
+                principalUrn = attachment.principalUrn
+                attachedOn = attachment.attachedOn ?: now
+                attachedBy = attachment.attachedBy
+            }
     }
 }

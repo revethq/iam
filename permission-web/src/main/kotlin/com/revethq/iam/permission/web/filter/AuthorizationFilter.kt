@@ -23,10 +23,9 @@ import jakarta.ws.rs.ext.Provider
  * 4. Aborts the request with 403 if not authorized
  */
 @Provider
-@RequiresPermission(action = "", resource = "")  // NameBinding marker
+@RequiresPermission(action = "", resource = "") // NameBinding marker
 @Priority(Priorities.AUTHORIZATION)
 class AuthorizationFilter : ContainerRequestFilter {
-
     @Context
     lateinit var resourceInfo: ResourceInfo
 
@@ -42,9 +41,10 @@ class AuthorizationFilter : ContainerRequestFilter {
         val principal = requestContext.securityContext?.userPrincipal
         if (principal == null) {
             requestContext.abortWith(
-                Response.status(Response.Status.UNAUTHORIZED)
+                Response
+                    .status(Response.Status.UNAUTHORIZED)
                     .entity(mapOf("error" to "unauthorized", "message" to "Authentication required"))
-                    .build()
+                    .build(),
             )
             return
         }
@@ -53,30 +53,34 @@ class AuthorizationFilter : ContainerRequestFilter {
         val action = annotation.action
         val resource = resolveResource(annotation.resource, requestContext)
 
-        val conditionContext = ConditionContext(
-            principalId = principalUrn,
-            sourceIp = authorizationContext.sourceIp ?: getClientIp(requestContext),
-            requestedAction = action,
-            requestedResource = resource
-        )
+        val conditionContext =
+            ConditionContext(
+                principalId = principalUrn,
+                sourceIp = authorizationContext.sourceIp ?: getClientIp(requestContext),
+                requestedAction = action,
+                requestedResource = resource,
+            )
 
-        val authRequest = AuthorizationRequest(
-            principalUrn = principalUrn,
-            action = action,
-            resourceUrn = resource,
-            context = conditionContext
-        )
+        val authRequest =
+            AuthorizationRequest(
+                principalUrn = principalUrn,
+                action = action,
+                resourceUrn = resource,
+                context = conditionContext,
+            )
 
         val result = policyEvaluator.evaluate(authRequest)
 
         if (result.isDenied()) {
             requestContext.abortWith(
-                Response.status(Response.Status.FORBIDDEN)
-                    .entity(mapOf(
-                        "error" to "forbidden",
-                        "message" to "Access denied for action '$action' on resource '$resource'"
-                    ))
-                    .build()
+                Response
+                    .status(Response.Status.FORBIDDEN)
+                    .entity(
+                        mapOf(
+                            "error" to "forbidden",
+                            "message" to "Access denied for action '$action' on resource '$resource'",
+                        ),
+                    ).build(),
             )
         }
     }
@@ -87,7 +91,10 @@ class AuthorizationFilter : ContainerRequestFilter {
             ?: resourceInfo.resourceClass?.getAnnotation(RequiresPermission::class.java)
     }
 
-    private fun resolveResource(pattern: String, requestContext: ContainerRequestContext): String {
+    private fun resolveResource(
+        pattern: String,
+        requestContext: ContainerRequestContext,
+    ): String {
         var result = pattern
 
         // Replace path parameters
@@ -114,7 +121,11 @@ class AuthorizationFilter : ContainerRequestFilter {
 
     private fun getClientIp(requestContext: ContainerRequestContext): String? {
         // Check common proxy headers first
-        return requestContext.getHeaderString("X-Forwarded-For")?.split(",")?.firstOrNull()?.trim()
+        return requestContext
+            .getHeaderString("X-Forwarded-For")
+            ?.split(",")
+            ?.firstOrNull()
+            ?.trim()
             ?: requestContext.getHeaderString("X-Real-IP")
     }
 }

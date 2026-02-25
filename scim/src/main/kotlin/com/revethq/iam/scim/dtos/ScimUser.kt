@@ -14,7 +14,7 @@ data class ScimUser(
     val emails: List<ScimEmail>? = null,
     val active: Boolean = true,
     val locale: String? = null,
-    val password: String? = null
+    val password: String? = null,
 ) {
     companion object {
         const val SCHEMA_USER = "urn:ietf:params:scim:schemas:core:2.0:User"

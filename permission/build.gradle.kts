@@ -2,7 +2,7 @@ import org.jboss.jandex.IndexWriter
 import org.jboss.jandex.Indexer
 
 plugins {
-    kotlin("jvm")
+    alias(libs.plugins.kotlin.jvm)
 }
 
 buildscript {
@@ -12,11 +12,11 @@ buildscript {
 }
 
 dependencies {
-    implementation("jakarta.enterprise:jakarta.enterprise.cdi-api:4.0.1")
-    implementation("jakarta.inject:jakarta.inject-api:2.0.1")
+    implementation(libs.jakarta.enterprise.cdi.api)
+    implementation(libs.jakarta.inject.api)
 
     testImplementation(kotlin("test"))
-    testImplementation("io.mockk:mockk:1.13.8")
+    testImplementation(libs.mockk)
 }
 
 tasks.register("jandex") {
@@ -27,16 +27,25 @@ tasks.register("jandex") {
 
     doLast {
         val indexer = Indexer()
-        val classesDir = layout.buildDirectory.dir("classes/kotlin/main").get().asFile
+        val classesDir =
+            layout.buildDirectory
+                .dir("classes/kotlin/main")
+                .get()
+                .asFile
 
-        classesDir.walkTopDown()
+        classesDir
+            .walkTopDown()
             .filter { it.isFile && it.extension == "class" }
             .forEach { classFile ->
                 classFile.inputStream().use { indexer.index(it) }
             }
 
         val index = indexer.complete()
-        val metaInfDir = layout.buildDirectory.dir("resources/main/META-INF").get().asFile
+        val metaInfDir =
+            layout.buildDirectory
+                .dir("resources/main/META-INF")
+                .get()
+                .asFile
         metaInfDir.mkdirs()
 
         val jandexFile = File(metaInfDir, "jandex.idx")

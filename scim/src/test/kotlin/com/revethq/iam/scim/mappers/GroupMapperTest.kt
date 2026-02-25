@@ -15,21 +15,21 @@ import kotlin.test.assertNotNull
 import kotlin.test.assertNull
 
 class GroupMapperTest {
-
     private val baseUrl = "https://example.com"
 
     @Test
     fun `toScimGroup maps basic fields`() {
         val groupId = UUID.randomUUID()
         val now = OffsetDateTime.now()
-        val group = Group(
-            id = groupId,
-            displayName = "Developers",
-            externalId = "ext-group-123",
-            metadata = Metadata(),
-            createdOn = now,
-            updatedOn = now
-        )
+        val group =
+            Group(
+                id = groupId,
+                displayName = "Developers",
+                externalId = "ext-group-123",
+                metadata = Metadata(),
+                createdOn = now,
+                updatedOn = now,
+            )
 
         val scimGroup = group.toScimGroup(baseUrl)
 
@@ -42,10 +42,11 @@ class GroupMapperTest {
     @Test
     fun `toScimGroup includes meta`() {
         val groupId = UUID.randomUUID()
-        val group = Group(
-            id = groupId,
-            displayName = "Admins"
-        )
+        val group =
+            Group(
+                id = groupId,
+                displayName = "Admins",
+            )
 
         val scimGroup = group.toScimGroup(baseUrl)
 
@@ -59,22 +60,25 @@ class GroupMapperTest {
         val groupId = UUID.randomUUID()
         val userId = UUID.randomUUID()
 
-        val group = Group(
-            id = groupId,
-            displayName = "Developers"
-        )
+        val group =
+            Group(
+                id = groupId,
+                displayName = "Developers",
+            )
 
-        val member = GroupMember(
-            groupId = groupId,
-            memberId = userId,
-            memberType = MemberType.USER
-        )
+        val member =
+            GroupMember(
+                groupId = groupId,
+                memberId = userId,
+                memberType = MemberType.USER,
+            )
 
-        val user = User(
-            id = userId,
-            username = "john.doe",
-            email = "john@example.com"
-        )
+        val user =
+            User(
+                id = userId,
+                username = "john.doe",
+                email = "john@example.com",
+            )
 
         val scimGroup = group.toScimGroup(baseUrl, listOf(member to user))
 
@@ -88,10 +92,11 @@ class GroupMapperTest {
 
     @Test
     fun `toDomain creates Group from ScimGroup`() {
-        val scimGroup = ScimGroup(
-            displayName = "Engineers",
-            externalId = "ext-eng-001"
-        )
+        val scimGroup =
+            ScimGroup(
+                displayName = "Engineers",
+                externalId = "ext-eng-001",
+            )
 
         val group = scimGroup.toDomain()
 
@@ -103,10 +108,11 @@ class GroupMapperTest {
     @Test
     fun `toDomain preserves id if provided`() {
         val existingId = UUID.randomUUID()
-        val scimGroup = ScimGroup(
-            id = existingId.toString(),
-            displayName = "Test Group"
-        )
+        val scimGroup =
+            ScimGroup(
+                id = existingId.toString(),
+                displayName = "Test Group",
+            )
 
         val group = scimGroup.toDomain()
 
@@ -115,16 +121,18 @@ class GroupMapperTest {
 
     @Test
     fun `updateDomain updates existing group`() {
-        val existingGroup = Group(
-            id = UUID.randomUUID(),
-            displayName = "Old Name",
-            externalId = "old-ext"
-        )
+        val existingGroup =
+            Group(
+                id = UUID.randomUUID(),
+                displayName = "Old Name",
+                externalId = "old-ext",
+            )
 
-        val scimGroup = ScimGroup(
-            displayName = "New Name",
-            externalId = "new-ext"
-        )
+        val scimGroup =
+            ScimGroup(
+                displayName = "New Name",
+                externalId = "new-ext",
+            )
 
         val updatedGroup = scimGroup.updateDomain(existingGroup)
 
@@ -138,10 +146,11 @@ class GroupMapperTest {
         val groupId = UUID.randomUUID()
         val memberId = UUID.randomUUID()
 
-        val scimMember = ScimMember(
-            value = memberId.toString(),
-            type = "User"
-        )
+        val scimMember =
+            ScimMember(
+                value = memberId.toString(),
+                type = "User",
+            )
 
         val groupMember = scimMember.toGroupMember(groupId)
 
@@ -155,10 +164,11 @@ class GroupMapperTest {
         val groupId = UUID.randomUUID()
         val nestedGroupId = UUID.randomUUID()
 
-        val scimMember = ScimMember(
-            value = nestedGroupId.toString(),
-            type = "Group"
-        )
+        val scimMember =
+            ScimMember(
+                value = nestedGroupId.toString(),
+                type = "Group",
+            )
 
         val groupMember = scimMember.toGroupMember(groupId)
 

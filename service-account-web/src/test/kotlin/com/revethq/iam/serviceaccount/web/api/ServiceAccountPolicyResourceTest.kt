@@ -20,14 +20,14 @@ import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 class ServiceAccountPolicyResourceTest {
-
     private val serviceAccountService = mockk<ServiceAccountService>()
     private val policyAttachmentService = mockk<PolicyAttachmentService>()
 
-    private val resource = ServiceAccountPolicyResource().apply {
-        this.serviceAccountService = this@ServiceAccountPolicyResourceTest.serviceAccountService
-        this.policyAttachmentService = this@ServiceAccountPolicyResourceTest.policyAttachmentService
-    }
+    private val resource =
+        ServiceAccountPolicyResource().apply {
+            this.serviceAccountService = this@ServiceAccountPolicyResourceTest.serviceAccountService
+            this.policyAttachmentService = this@ServiceAccountPolicyResourceTest.policyAttachmentService
+        }
 
     @Test
     fun `listPoliciesForServiceAccount returns attached policies`() {
@@ -35,11 +35,13 @@ class ServiceAccountPolicyResourceTest {
         val sa = ServiceAccount(id = id, name = "bot", tenantId = "acme")
         every { serviceAccountService.findById(id) } returns sa
 
-        val attachedPolicies = listOf(
-            createAttachedPolicy("AdminPolicy"),
-            createAttachedPolicy("ReadOnlyPolicy")
-        )
-        every { policyAttachmentService.listAttachedPoliciesForPrincipal("urn:revet:iam:acme:service-account/$id") } returns attachedPolicies
+        val attachedPolicies =
+            listOf(
+                createAttachedPolicy("AdminPolicy"),
+                createAttachedPolicy("ReadOnlyPolicy"),
+            )
+        every { policyAttachmentService.listAttachedPoliciesForPrincipal("urn:revet:iam:acme:service-account/$id") } returns
+            attachedPolicies
 
         val result = resource.listPoliciesForServiceAccount(id.toString(), 0, 20)
 
@@ -102,17 +104,20 @@ class ServiceAccountPolicyResourceTest {
         }
     }
 
-    private fun createAttachedPolicy(name: String): AttachedPolicy = AttachedPolicy(
-        attachmentId = UUID.randomUUID(),
-        policy = Policy(
-            id = UUID.randomUUID(),
-            name = name,
-            version = "2026-01-15",
-            statements = listOf(
-                Statement(effect = Effect.ALLOW, actions = listOf("iam:*"), resources = listOf("urn:revet:iam:*:*/*"))
-            )
-        ),
-        attachedOn = OffsetDateTime.now(),
-        attachedBy = null
-    )
+    private fun createAttachedPolicy(name: String): AttachedPolicy =
+        AttachedPolicy(
+            attachmentId = UUID.randomUUID(),
+            policy =
+                Policy(
+                    id = UUID.randomUUID(),
+                    name = name,
+                    version = "2026-01-15",
+                    statements =
+                        listOf(
+                            Statement(effect = Effect.ALLOW, actions = listOf("iam:*"), resources = listOf("urn:revet:iam:*:*/*")),
+                        ),
+                ),
+            attachedOn = OffsetDateTime.now(),
+            attachedBy = null,
+        )
 }

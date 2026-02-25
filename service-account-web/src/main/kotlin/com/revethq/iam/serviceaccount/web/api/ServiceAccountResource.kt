@@ -25,7 +25,6 @@ import java.util.UUID
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 class ServiceAccountResource {
-
     @Inject
     lateinit var serviceAccountService: ServiceAccountService
 
@@ -34,24 +33,28 @@ class ServiceAccountResource {
         val serviceAccount = request.toDomain()
         val created = serviceAccountService.create(serviceAccount)
 
-        return Response.status(Response.Status.CREATED)
+        return Response
+            .status(Response.Status.CREATED)
             .entity(ServiceAccountResponse.fromDomain(created))
             .build()
     }
 
     @GET
     @Path("/{id}")
-    fun getServiceAccount(@PathParam("id") id: String): ServiceAccountResponse {
+    fun getServiceAccount(
+        @PathParam("id") id: String,
+    ): ServiceAccountResponse {
         val uuid = UUID.fromString(id)
-        val serviceAccount = serviceAccountService.findById(uuid)
-            ?: throw ServiceAccountNotFoundException(id)
+        val serviceAccount =
+            serviceAccountService.findById(uuid)
+                ?: throw ServiceAccountNotFoundException(id)
         return ServiceAccountResponse.fromDomain(serviceAccount)
     }
 
     @GET
     fun listServiceAccounts(
         @QueryParam("page") @DefaultValue("0") page: Int,
-        @QueryParam("size") @DefaultValue("20") size: Int
+        @QueryParam("size") @DefaultValue("20") size: Int,
     ): PageResponse<ServiceAccountResponse> {
         val result = serviceAccountService.list(page * size, size + 1)
         val hasMore = result.items.size > size
@@ -61,7 +64,7 @@ class ServiceAccountResource {
             content = content.map { ServiceAccountResponse.fromDomain(it) },
             page = page,
             size = size,
-            hasMore = hasMore
+            hasMore = hasMore,
         )
     }
 
@@ -69,17 +72,19 @@ class ServiceAccountResource {
     @Path("/{id}")
     fun updateServiceAccount(
         @PathParam("id") id: String,
-        request: UpdateServiceAccountRequest
+        request: UpdateServiceAccountRequest,
     ): ServiceAccountResponse {
         val uuid = UUID.fromString(id)
-        val existing = serviceAccountService.findById(uuid)
-            ?: throw ServiceAccountNotFoundException(id)
+        val existing =
+            serviceAccountService.findById(uuid)
+                ?: throw ServiceAccountNotFoundException(id)
 
-        val updated = existing.copy(
-            name = request.name,
-            description = request.description,
-            tenantId = request.tenantId
-        )
+        val updated =
+            existing.copy(
+                name = request.name,
+                description = request.description,
+                tenantId = request.tenantId,
+            )
 
         val saved = serviceAccountService.update(updated)
         return ServiceAccountResponse.fromDomain(saved)
@@ -87,7 +92,9 @@ class ServiceAccountResource {
 
     @DELETE
     @Path("/{id}")
-    fun deleteServiceAccount(@PathParam("id") id: String): Response {
+    fun deleteServiceAccount(
+        @PathParam("id") id: String,
+    ): Response {
         val uuid = UUID.fromString(id)
         if (!serviceAccountService.delete(uuid)) {
             throw ServiceAccountNotFoundException(id)

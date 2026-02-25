@@ -7,13 +7,12 @@ import java.util.UUID
 
 @ApplicationScoped
 class GroupMemberRepository : PanacheRepositoryBase<GroupMemberEntity, UUID> {
+    fun findByGroupId(groupId: UUID): List<GroupMemberEntity> = list("groupId", groupId)
 
-    fun findByGroupId(groupId: UUID): List<GroupMemberEntity> =
-        list("groupId", groupId)
+    fun deleteByGroupId(groupId: UUID): Long = delete("groupId", groupId)
 
-    fun deleteByGroupId(groupId: UUID): Long =
-        delete("groupId", groupId)
-
-    fun findByGroupIdAndMemberId(groupId: UUID, memberId: UUID): GroupMemberEntity? =
-        find("groupId = ?1 and memberId = ?2", groupId, memberId).firstResult()
+    fun findByGroupIdAndMemberId(
+        groupId: UUID,
+        memberId: UUID,
+    ): GroupMemberEntity? = find("groupId = ?1 and memberId = ?2", groupId, memberId).firstResult()
 }

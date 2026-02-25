@@ -14,7 +14,6 @@ import org.eclipse.microprofile.jwt.JsonWebToken
 @ScimEndpoint
 @Priority(Priorities.AUTHENTICATION)
 class BearerTokenFilter : ContainerRequestFilter {
-
     @Inject
     lateinit var jwt: JsonWebToken
 
@@ -47,8 +46,9 @@ class BearerTokenFilter : ContainerRequestFilter {
             throw ScimUnauthorizedException("Missing issuer claim in token")
         }
 
-        val identityProvider = identityProviderService.findByExternalId(issuer)
-            ?: throw ScimUnauthorizedException("Unknown identity provider: $issuer")
+        val identityProvider =
+            identityProviderService.findByExternalId(issuer)
+                ?: throw ScimUnauthorizedException("Unknown identity provider: $issuer")
 
         // Store the identity provider ID in request-scoped context
         scimRequestContext.identityProviderId = identityProvider.id

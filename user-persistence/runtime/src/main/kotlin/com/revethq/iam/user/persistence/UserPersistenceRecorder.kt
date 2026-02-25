@@ -4,8 +4,7 @@ import io.quarkus.runtime.annotations.Recorder
 
 @Recorder
 class UserPersistenceRecorder {
-
-    fun initialize(): Unit {
+    fun initialize() {
         // Runtime initialization logic
     }
 }

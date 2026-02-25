@@ -17,7 +17,10 @@ object ActionMatcher {
      * @param pattern The pattern from a policy statement (e.g., "iam:*")
      * @return true if the action matches the pattern
      */
-    fun matches(action: String, pattern: String): Boolean {
+    fun matches(
+        action: String,
+        pattern: String,
+    ): Boolean {
         // Full wildcard matches everything
         if (pattern == "*") return true
 
@@ -45,6 +48,8 @@ object ActionMatcher {
     /**
      * Check if an action matches any of the given patterns.
      */
-    fun matchesAny(action: String, patterns: List<String>): Boolean =
-        patterns.any { matches(action, it) }
+    fun matchesAny(
+        action: String,
+        patterns: List<String>,
+    ): Boolean = patterns.any { matches(action, it) }
 }

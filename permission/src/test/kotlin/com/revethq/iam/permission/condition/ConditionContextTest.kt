@@ -6,7 +6,6 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class ConditionContextTest {
-
     private val testTime = OffsetDateTime.of(2026, 1, 15, 12, 30, 45, 0, ZoneOffset.UTC)
 
     @Test
@@ -67,19 +66,21 @@ class ConditionContextTest {
 
     @Test
     fun `resolve custom variable`() {
-        val context = ConditionContext(
-            customVariables = mapOf("custom:MyKey" to "my-value")
-        )
+        val context =
+            ConditionContext(
+                customVariables = mapOf("custom:MyKey" to "my-value"),
+            )
 
         assertEquals("my-value", context.resolveVariable("\${custom:MyKey}"))
     }
 
     @Test
     fun `resolveVariables replaces all variables in string`() {
-        val context = ConditionContext(
-            principalId = "alice",
-            requestedAction = "iam:CreateUser"
-        )
+        val context =
+            ConditionContext(
+                principalId = "alice",
+                requestedAction = "iam:CreateUser",
+            )
 
         val result = context.resolveVariables("User \${revet:PrincipalId} requested \${revet:RequestedAction}")
 
@@ -97,13 +98,14 @@ class ConditionContextTest {
 
     @Test
     fun `getValue returns correct values`() {
-        val context = ConditionContext(
-            principalId = "alice",
-            sourceIp = "10.0.0.1",
-            requestedAction = "iam:GetUser",
-            requestedResource = "urn:revet:iam::user/bob",
-            currentTime = testTime
-        )
+        val context =
+            ConditionContext(
+                principalId = "alice",
+                sourceIp = "10.0.0.1",
+                requestedAction = "iam:GetUser",
+                requestedResource = "urn:revet:iam::user/bob",
+                currentTime = testTime,
+            )
 
         assertEquals("alice", context.getValue("revet:PrincipalId"))
         assertEquals("10.0.0.1", context.getValue("revet:SourceIp"))

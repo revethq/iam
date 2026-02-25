@@ -5,8 +5,8 @@ import com.revethq.iam.permission.domain.Policy
 import com.revethq.iam.permission.domain.PolicyAttachment
 import com.revethq.iam.permission.domain.Statement
 import com.revethq.iam.permission.persistence.Page
-import com.revethq.iam.permission.service.PolicyAttachmentService
 import com.revethq.iam.permission.persistence.service.PolicyService
+import com.revethq.iam.permission.service.PolicyAttachmentService
 import com.revethq.iam.permission.web.dto.AttachPolicyRequest
 import com.revethq.iam.permission.web.dto.CreatePolicyRequest
 import com.revethq.iam.permission.web.dto.StatementDto
@@ -25,24 +25,26 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 
 class PolicyResourceTest {
-
     private val policyService = mockk<PolicyService>(relaxed = true)
     private val policyAttachmentService = mockk<PolicyAttachmentService>(relaxed = true)
 
-    private val resource = PolicyResource().apply {
-        this.policyService = this@PolicyResourceTest.policyService
-        this.policyAttachmentService = this@PolicyResourceTest.policyAttachmentService
-    }
+    private val resource =
+        PolicyResource().apply {
+            this.policyService = this@PolicyResourceTest.policyService
+            this.policyAttachmentService = this@PolicyResourceTest.policyAttachmentService
+        }
 
     @Test
     fun `createPolicy returns 201 with created policy`() {
-        val request = CreatePolicyRequest(
-            name = "TestPolicy",
-            version = "2026-01-15",
-            statements = listOf(
-                StatementDto(effect = "Allow", actions = listOf("iam:*"), resources = listOf("urn:revet:iam:*:*/*"))
+        val request =
+            CreatePolicyRequest(
+                name = "TestPolicy",
+                version = "2026-01-15",
+                statements =
+                    listOf(
+                        StatementDto(effect = "Allow", actions = listOf("iam:*"), resources = listOf("urn:revet:iam:*:*/*")),
+                    ),
             )
-        )
 
         every { policyService.findByName("TestPolicy", null) } returns null
         val policySlot = slot<Policy>()
@@ -60,13 +62,15 @@ class PolicyResourceTest {
 
         every { policyService.findByName("TestPolicy", null) } returns existingPolicy
 
-        val request = CreatePolicyRequest(
-            name = "TestPolicy",
-            version = "2026-01-15",
-            statements = listOf(
-                StatementDto(effect = "Allow", actions = listOf("iam:*"), resources = listOf("urn:revet:iam:*:*/*"))
+        val request =
+            CreatePolicyRequest(
+                name = "TestPolicy",
+                version = "2026-01-15",
+                statements =
+                    listOf(
+                        StatementDto(effect = "Allow", actions = listOf("iam:*"), resources = listOf("urn:revet:iam:*:*/*")),
+                    ),
             )
-        )
 
         assertFailsWith<PolicyConflictException> {
             resource.createPolicy(request)
@@ -112,13 +116,15 @@ class PolicyResourceTest {
         val existing = createPolicy("OldName")
         every { policyService.findById(existing.id) } returns existing
 
-        val request = UpdatePolicyRequest(
-            name = "NewName",
-            version = "2026-01-15",
-            statements = listOf(
-                StatementDto(effect = "Allow", actions = listOf("iam:*"), resources = listOf("urn:revet:iam:*:*/*"))
+        val request =
+            UpdatePolicyRequest(
+                name = "NewName",
+                version = "2026-01-15",
+                statements =
+                    listOf(
+                        StatementDto(effect = "Allow", actions = listOf("iam:*"), resources = listOf("urn:revet:iam:*:*/*")),
+                    ),
             )
-        )
 
         val policySlot = slot<Policy>()
         every { policyService.update(capture(policySlot)) } answers { policySlot.captured }
@@ -133,13 +139,15 @@ class PolicyResourceTest {
         val id = UUID.randomUUID()
         every { policyService.findById(id) } returns null
 
-        val request = UpdatePolicyRequest(
-            name = "NewName",
-            version = "2026-01-15",
-            statements = listOf(
-                StatementDto(effect = "Allow", actions = listOf("iam:*"), resources = listOf("urn:revet:iam:*:*/*"))
+        val request =
+            UpdatePolicyRequest(
+                name = "NewName",
+                version = "2026-01-15",
+                statements =
+                    listOf(
+                        StatementDto(effect = "Allow", actions = listOf("iam:*"), resources = listOf("urn:revet:iam:*:*/*")),
+                    ),
             )
-        )
 
         assertFailsWith<PolicyNotFoundException> {
             resource.updatePolicy(id.toString(), request)
@@ -221,10 +229,11 @@ class PolicyResourceTest {
     @Test
     fun `listAttachments returns attachments for policy`() {
         val policyId = UUID.randomUUID()
-        val attachments = listOf(
-            PolicyAttachment(UUID.randomUUID(), policyId, "urn:revet:iam::user/alice"),
-            PolicyAttachment(UUID.randomUUID(), policyId, "urn:revet:iam::user/bob")
-        )
+        val attachments =
+            listOf(
+                PolicyAttachment(UUID.randomUUID(), policyId, "urn:revet:iam::user/alice"),
+                PolicyAttachment(UUID.randomUUID(), policyId, "urn:revet:iam::user/bob"),
+            )
 
         every { policyService.findById(policyId) } returns createPolicy("TestPolicy", policyId)
         every { policyAttachmentService.listAttachmentsForPolicy(policyId) } returns attachments
@@ -234,12 +243,17 @@ class PolicyResourceTest {
         assertEquals(2, result.items.size)
     }
 
-    private fun createPolicy(name: String, id: UUID = UUID.randomUUID()): Policy = Policy(
-        id = id,
-        name = name,
-        version = "2026-01-15",
-        statements = listOf(
-            Statement(effect = Effect.ALLOW, actions = listOf("iam:*"), resources = listOf("urn:revet:iam:*:*/*"))
+    private fun createPolicy(
+        name: String,
+        id: UUID = UUID.randomUUID(),
+    ): Policy =
+        Policy(
+            id = id,
+            name = name,
+            version = "2026-01-15",
+            statements =
+                listOf(
+                    Statement(effect = Effect.ALLOW, actions = listOf("iam:*"), resources = listOf("urn:revet:iam:*:*/*")),
+                ),
         )
-    )
 }

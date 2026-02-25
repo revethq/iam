@@ -11,7 +11,7 @@ data class ScimResourceType(
     val description: String? = null,
     val schema: String,
     val schemaExtensions: List<SchemaExtension>? = null,
-    val meta: ScimMeta? = null
+    val meta: ScimMeta? = null,
 ) {
     companion object {
         const val SCHEMA_RESOURCE_TYPE = "urn:ietf:params:scim:schemas:core:2.0:ResourceType"
@@ -21,5 +21,5 @@ data class ScimResourceType(
 @RegisterForReflection
 data class SchemaExtension(
     val schema: String,
-    val required: Boolean = false
+    val required: Boolean = false,
 )

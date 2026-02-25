@@ -7,10 +7,7 @@ import java.util.UUID
 
 @ApplicationScoped
 class UserRepository : PanacheRepositoryBase<UserEntity, UUID> {
+    fun findByUsername(username: String): UserEntity? = find("username", username).firstResult()
 
-    fun findByUsername(username: String): UserEntity? =
-        find("username", username).firstResult()
-
-    fun findByEmail(email: String): UserEntity? =
-        find("email", email).firstResult()
+    fun findByEmail(email: String): UserEntity? = find("email", email).firstResult()
 }

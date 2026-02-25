@@ -4,11 +4,11 @@ import com.revethq.iam.scim.dtos.ScimError
 import com.revethq.iam.scim.exception.ScimBadRequestException
 
 object ScimFilterParser {
-
-    private val SIMPLE_FILTER_REGEX = Regex(
-        """(\w+(?:\.\w+)*)\s+(eq|co|sw)\s+"([^"]*)"""",
-        RegexOption.IGNORE_CASE
-    )
+    private val SIMPLE_FILTER_REGEX =
+        Regex(
+            """(\w+(?:\.\w+)*)\s+(eq|co|sw)\s+"([^"]*)"""",
+            RegexOption.IGNORE_CASE,
+        )
 
     fun parse(filterString: String?): ScimFilter? {
         if (filterString.isNullOrBlank()) {
@@ -35,7 +35,7 @@ object ScimFilterParser {
             "sw" -> SwFilter(attribute, value)
             else -> throw ScimBadRequestException(
                 ScimError.INVALID_FILTER,
-                "Unsupported operator: $operator"
+                "Unsupported operator: $operator",
             )
         }
     }
@@ -47,14 +47,16 @@ object ScimFilterParser {
         // Try to split on ' and ' (case insensitive)
         val andParts = splitOnOperator(filter, " and ")
         if (andParts.size > 1) {
-            return andParts.map { parseCompoundFilter(it) }
+            return andParts
+                .map { parseCompoundFilter(it) }
                 .reduce { left, right -> AndFilter(left, right) }
         }
 
         // Try to split on ' or ' (case insensitive)
         val orParts = splitOnOperator(filter, " or ")
         if (orParts.size > 1) {
-            return orParts.map { parseCompoundFilter(it) }
+            return orParts
+                .map { parseCompoundFilter(it) }
                 .reduce { left, right -> OrFilter(left, right) }
         }
 
@@ -66,11 +68,14 @@ object ScimFilterParser {
 
         throw ScimBadRequestException(
             ScimError.INVALID_FILTER,
-            "Invalid filter syntax: $filter"
+            "Invalid filter syntax: $filter",
         )
     }
 
-    private fun splitOnOperator(filter: String, operator: String): List<String> {
+    private fun splitOnOperator(
+        filter: String,
+        operator: String,
+    ): List<String> {
         val parts = mutableListOf<String>()
         var current = StringBuilder()
         var inQuotes = false

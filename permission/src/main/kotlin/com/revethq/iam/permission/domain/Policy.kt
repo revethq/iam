@@ -26,7 +26,7 @@ data class Policy(
     var tenantId: String? = null,
     var metadata: Metadata = Metadata(),
     var createdOn: OffsetDateTime? = null,
-    var updatedOn: OffsetDateTime? = null
+    var updatedOn: OffsetDateTime? = null,
 ) {
     init {
         require(statements.isNotEmpty()) { "Policy must have at least one statement" }

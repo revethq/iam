@@ -8,7 +8,6 @@ import com.revethq.iam.user.persistence.entity.ProfileEntity
 import com.revethq.iam.user.persistence.repository.ProfileRepository
 import io.mockk.every
 import io.mockk.mockk
-import io.mockk.slot
 import io.mockk.verify
 import java.time.OffsetDateTime
 import java.util.UUID
@@ -17,14 +16,14 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 
 class ServiceAccountProfileResourceTest {
-
     private val serviceAccountService = mockk<ServiceAccountService>()
     private val profileRepository = mockk<ProfileRepository>(relaxed = true)
 
-    private val resource = ServiceAccountProfileResource().apply {
-        this.serviceAccountService = this@ServiceAccountProfileResourceTest.serviceAccountService
-        this.profileRepository = this@ServiceAccountProfileResourceTest.profileRepository
-    }
+    private val resource =
+        ServiceAccountProfileResource().apply {
+            this.serviceAccountService = this@ServiceAccountProfileResourceTest.serviceAccountService
+            this.profileRepository = this@ServiceAccountProfileResourceTest.profileRepository
+        }
 
     @Test
     fun `getProfile returns profile when found`() {
@@ -32,14 +31,15 @@ class ServiceAccountProfileResourceTest {
         val sa = ServiceAccount(id = id, name = "bot")
         every { serviceAccountService.findById(id) } returns sa
 
-        val profileEntity = ProfileEntity().apply {
-            this.id = UUID.randomUUID()
-            resource = id
-            profileType = ProfileType.ServiceAccount
-            profile = mapOf("role" to "worker")
-            createdOn = OffsetDateTime.now()
-            updatedOn = OffsetDateTime.now()
-        }
+        val profileEntity =
+            ProfileEntity().apply {
+                this.id = UUID.randomUUID()
+                resource = id
+                profileType = ProfileType.ServiceAccount
+                profile = mapOf("role" to "worker")
+                createdOn = OffsetDateTime.now()
+                updatedOn = OffsetDateTime.now()
+            }
         every { profileRepository.findByResourceAndProfileType(id, ProfileType.ServiceAccount) } returns profileEntity
 
         val response = resource.getProfile(id.toString())
@@ -89,14 +89,15 @@ class ServiceAccountProfileResourceTest {
         val sa = ServiceAccount(id = id, name = "bot")
         every { serviceAccountService.findById(id) } returns sa
 
-        val existingEntity = ProfileEntity().apply {
-            this.id = UUID.randomUUID()
-            resource = id
-            profileType = ProfileType.ServiceAccount
-            profile = mapOf("role" to "old")
-            createdOn = OffsetDateTime.now()
-            updatedOn = OffsetDateTime.now()
-        }
+        val existingEntity =
+            ProfileEntity().apply {
+                this.id = UUID.randomUUID()
+                resource = id
+                profileType = ProfileType.ServiceAccount
+                profile = mapOf("role" to "old")
+                createdOn = OffsetDateTime.now()
+                updatedOn = OffsetDateTime.now()
+            }
         every { profileRepository.findByResourceAndProfileType(id, ProfileType.ServiceAccount) } returns existingEntity
 
         val profileData = mapOf("role" to "updated")

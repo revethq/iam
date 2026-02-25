@@ -24,9 +24,8 @@ annotation class RequiresPermission(
      * The action being performed (e.g., "iam:GetUser", "storage:GetObject")
      */
     val action: String,
-
     /**
      * The resource URN pattern. Supports placeholders like {userId}, {tenantId}
      */
-    val resource: String
+    val resource: String,
 )

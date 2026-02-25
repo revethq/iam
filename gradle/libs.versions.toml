@@ -1,0 +1,63 @@
+[versions]
+quarkus = "3.31.1"
+kotlin = "2.3.10"
+jreleaser = "1.22.0"
+ktlint = "14.0.1"
+jandex = "3.2.0"
+mockk = "1.13.8"
+resteasy = "6.2.7.Final"
+revet-core = "0.1.0"
+jakarta-cdi = "4.0.1"
+jakarta-inject = "2.0.1"
+jakarta-ws-rs = "3.1.0"
+jakarta-annotation = "2.1.1"
+jakarta-json-bind = "3.0.0"
+jakarta-transaction = "2.0.1"
+microprofile-openapi = "3.1.1"
+microprofile-jwt = "2.1"
+
+[libraries]
+quarkus-bom = { module = "io.quarkus:quarkus-bom", version.ref = "quarkus" }
+revet-core = { module = "com.revethq:revet-core", version.ref = "revet-core" }
+
+# Quarkus (versions from BOM)
+quarkus-core = { module = "io.quarkus:quarkus-core" }
+quarkus-arc = { module = "io.quarkus:quarkus-arc" }
+quarkus-hibernate-orm-panache-kotlin = { module = "io.quarkus:quarkus-hibernate-orm-panache-kotlin" }
+quarkus-jdbc-postgresql = { module = "io.quarkus:quarkus-jdbc-postgresql" }
+quarkus-flyway = { module = "io.quarkus:quarkus-flyway" }
+
+# Quarkus deployment (versions from BOM)
+quarkus-core-deployment = { module = "io.quarkus:quarkus-core-deployment" }
+quarkus-arc-deployment = { module = "io.quarkus:quarkus-arc-deployment" }
+quarkus-hibernate-orm-panache-kotlin-deployment = { module = "io.quarkus:quarkus-hibernate-orm-panache-kotlin-deployment" }
+quarkus-jdbc-postgresql-deployment = { module = "io.quarkus:quarkus-jdbc-postgresql-deployment" }
+quarkus-flyway-deployment = { module = "io.quarkus:quarkus-flyway-deployment" }
+
+# Jakarta
+jakarta-enterprise-cdi-api = { module = "jakarta.enterprise:jakarta.enterprise.cdi-api", version.ref = "jakarta-cdi" }
+jakarta-inject-api = { module = "jakarta.inject:jakarta.inject-api", version.ref = "jakarta-inject" }
+jakarta-ws-rs-api = { module = "jakarta.ws.rs:jakarta.ws.rs-api", version.ref = "jakarta-ws-rs" }
+jakarta-annotation-api = { module = "jakarta.annotation:jakarta.annotation-api", version.ref = "jakarta-annotation" }
+jakarta-json-bind-api = { module = "jakarta.json.bind:jakarta.json.bind-api", version.ref = "jakarta-json-bind" }
+jakarta-transaction-api = { module = "jakarta.transaction:jakarta.transaction-api", version.ref = "jakarta-transaction" }
+
+# MicroProfile
+microprofile-openapi-api = { module = "org.eclipse.microprofile.openapi:microprofile-openapi-api", version.ref = "microprofile-openapi" }
+microprofile-jwt-auth-api = { module = "org.eclipse.microprofile.jwt:microprofile-jwt-auth-api", version.ref = "microprofile-jwt" }
+
+# Jackson
+jackson-module-kotlin = { module = "com.fasterxml.jackson.module:jackson-module-kotlin" }
+
+# Build
+jandex = { module = "io.smallrye:jandex", version.ref = "jandex" }
+
+# Testing
+mockk = { module = "io.mockk:mockk", version.ref = "mockk" }
+resteasy-core = { module = "org.jboss.resteasy:resteasy-core", version.ref = "resteasy" }
+
+[plugins]
+quarkus-extension = { id = "io.quarkus.extension", version.ref = "quarkus" }
+kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
+jreleaser = { id = "org.jreleaser", version.ref = "jreleaser" }
+ktlint = { id = "org.jlleitschuh.gradle.ktlint", version.ref = "ktlint" }

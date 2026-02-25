@@ -18,20 +18,21 @@ import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 class ServiceAccountResourceTest {
-
     private val serviceAccountService = mockk<ServiceAccountService>(relaxed = true)
 
-    private val resource = ServiceAccountResource().apply {
-        this.serviceAccountService = this@ServiceAccountResourceTest.serviceAccountService
-    }
+    private val resource =
+        ServiceAccountResource().apply {
+            this.serviceAccountService = this@ServiceAccountResourceTest.serviceAccountService
+        }
 
     @Test
     fun `createServiceAccount returns 201 with created service account`() {
-        val request = CreateServiceAccountRequest(
-            name = "ci-bot",
-            description = "CI pipeline",
-            tenantId = "acme"
-        )
+        val request =
+            CreateServiceAccountRequest(
+                name = "ci-bot",
+                description = "CI pipeline",
+                tenantId = "acme",
+            )
 
         val saSlot = slot<ServiceAccount>()
         every { serviceAccountService.create(capture(saSlot)) } answers { saSlot.captured }
@@ -97,11 +98,12 @@ class ServiceAccountResourceTest {
         val existing = createServiceAccount("old-name")
         every { serviceAccountService.findById(existing.id) } returns existing
 
-        val request = UpdateServiceAccountRequest(
-            name = "new-name",
-            description = "updated desc",
-            tenantId = "new-tenant"
-        )
+        val request =
+            UpdateServiceAccountRequest(
+                name = "new-name",
+                description = "updated desc",
+                tenantId = "new-tenant",
+            )
 
         val saSlot = slot<ServiceAccount>()
         every { serviceAccountService.update(capture(saSlot)) } answers { saSlot.captured }
@@ -145,10 +147,14 @@ class ServiceAccountResourceTest {
         }
     }
 
-    private fun createServiceAccount(name: String, id: UUID = UUID.randomUUID()): ServiceAccount = ServiceAccount(
-        id = id,
-        name = name,
-        description = "$name description",
-        tenantId = "test-tenant"
-    )
+    private fun createServiceAccount(
+        name: String,
+        id: UUID = UUID.randomUUID(),
+    ): ServiceAccount =
+        ServiceAccount(
+            id = id,
+            name = name,
+            description = "$name description",
+            tenantId = "test-tenant",
+        )
 }

@@ -14,7 +14,7 @@ data class Statement(
     val effect: Effect,
     val actions: List<String>,
     val resources: List<String>,
-    val conditions: Map<String, Map<String, List<String>>> = emptyMap()
+    val conditions: Map<String, Map<String, List<String>>> = emptyMap(),
 ) {
     init {
         require(actions.isNotEmpty()) { "Statement must have at least one action" }
@@ -24,8 +24,7 @@ data class Statement(
     /**
      * Check if this statement's actions include the requested action.
      */
-    fun matchesAction(action: String): Boolean =
-        ActionMatcher.matchesAny(action, actions)
+    fun matchesAction(action: String): Boolean = ActionMatcher.matchesAny(action, actions)
 
     /**
      * Check if this statement's resources include the requested resource.

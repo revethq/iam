@@ -28,7 +28,6 @@ import java.util.UUID
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 class GroupResource {
-
     @Inject
     lateinit var groupService: GroupService
 
@@ -41,24 +40,28 @@ class GroupResource {
         val group = request.toDomain()
         val created = groupService.create(group)
 
-        return Response.status(Response.Status.CREATED)
+        return Response
+            .status(Response.Status.CREATED)
             .entity(GroupResponse.fromDomain(created))
             .build()
     }
 
     @GET
     @Path("/{id}")
-    fun getGroup(@PathParam("id") id: String): GroupResponse {
+    fun getGroup(
+        @PathParam("id") id: String,
+    ): GroupResponse {
         val uuid = UUID.fromString(id)
-        val group = groupService.findById(uuid)
-            ?: throw GroupNotFoundException(id)
+        val group =
+            groupService.findById(uuid)
+                ?: throw GroupNotFoundException(id)
         return GroupResponse.fromDomain(group)
     }
 
     @GET
     fun listGroups(
         @QueryParam("page") @DefaultValue("0") page: Int,
-        @QueryParam("size") @DefaultValue("20") size: Int
+        @QueryParam("size") @DefaultValue("20") size: Int,
     ): PageResponse<GroupResponse> {
         val result = groupService.list(page * size, size + 1)
         val hasMore = result.items.size > size
@@ -68,7 +71,7 @@ class GroupResource {
             content = content.map { GroupResponse.fromDomain(it) },
             page = page,
             size = size,
-            hasMore = hasMore
+            hasMore = hasMore,
         )
     }
 
@@ -76,15 +79,17 @@ class GroupResource {
     @Path("/{id}")
     fun updateGroup(
         @PathParam("id") id: String,
-        request: UpdateGroupRequest
+        request: UpdateGroupRequest,
     ): GroupResponse {
         val uuid = UUID.fromString(id)
-        val existing = groupService.findById(uuid)
-            ?: throw GroupNotFoundException(id)
+        val existing =
+            groupService.findById(uuid)
+                ?: throw GroupNotFoundException(id)
 
-        val updated = existing.copy(
-            displayName = request.displayName
-        )
+        val updated =
+            existing.copy(
+                displayName = request.displayName,
+            )
 
         val saved = groupService.update(updated)
         return GroupResponse.fromDomain(saved)
@@ -92,7 +97,9 @@ class GroupResource {
 
     @DELETE
     @Path("/{id}")
-    fun deleteGroup(@PathParam("id") id: String): Response {
+    fun deleteGroup(
+        @PathParam("id") id: String,
+    ): Response {
         val uuid = UUID.fromString(id)
         if (!groupService.delete(uuid)) {
             throw GroupNotFoundException(id)
@@ -104,7 +111,9 @@ class GroupResource {
 
     @GET
     @Path("/{id}/members")
-    fun getMembers(@PathParam("id") id: String): List<GroupMemberResponse> {
+    fun getMembers(
+        @PathParam("id") id: String,
+    ): List<GroupMemberResponse> {
         val uuid = UUID.fromString(id)
         groupService.findById(uuid) ?: throw GroupNotFoundException(id)
 
@@ -115,7 +124,7 @@ class GroupResource {
     @Path("/{id}/members")
     fun addMember(
         @PathParam("id") id: String,
-        request: AddMemberRequest
+        request: AddMemberRequest,
     ): Response {
         val uuid = UUID.fromString(id)
         groupService.findById(uuid) ?: throw GroupNotFoundException(id)
@@ -123,7 +132,8 @@ class GroupResource {
         val member = request.toDomain(uuid)
         val created = groupService.addMember(uuid, member)
 
-        return Response.status(Response.Status.CREATED)
+        return Response
+            .status(Response.Status.CREATED)
             .entity(GroupMemberResponse.fromDomain(created))
             .build()
     }
@@ -132,7 +142,7 @@ class GroupResource {
     @Path("/{id}/members/{memberId}")
     fun removeMember(
         @PathParam("id") id: String,
-        @PathParam("memberId") memberId: String
+        @PathParam("memberId") memberId: String,
     ): Response {
         val groupUuid = UUID.fromString(id)
         val memberUuid = UUID.fromString(memberId)

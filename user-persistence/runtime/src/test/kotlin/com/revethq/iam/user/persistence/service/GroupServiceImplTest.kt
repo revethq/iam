@@ -21,17 +21,17 @@ import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
 class GroupServiceImplTest {
-
     private val groupRepository = mockk<GroupRepository>(relaxed = true)
     private val groupMemberRepository = mockk<GroupMemberRepository>(relaxed = true)
     private val groupService = GroupServiceImpl(groupRepository, groupMemberRepository)
 
     @Test
     fun `create persists group and returns domain object`() {
-        val group = Group(
-            id = UUID.randomUUID(),
-            displayName = "Engineering"
-        )
+        val group =
+            Group(
+                id = UUID.randomUUID(),
+                displayName = "Engineering",
+            )
 
         val result = groupService.create(group)
 
@@ -98,11 +98,12 @@ class GroupServiceImplTest {
         val existingEntity = createGroupEntity(groupId, "Old Name")
         every { groupRepository.findById(groupId) } returns existingEntity
 
-        val updatedGroup = Group(
-            id = groupId,
-            displayName = "New Name",
-            externalId = "new-ext-id"
-        )
+        val updatedGroup =
+            Group(
+                id = groupId,
+                displayName = "New Name",
+                externalId = "new-ext-id",
+            )
 
         val result = groupService.update(updatedGroup)
 
@@ -136,10 +137,11 @@ class GroupServiceImplTest {
     @Test
     fun `getMembers returns list of members`() {
         val groupId = UUID.randomUUID()
-        val memberEntities = listOf(
-            createMemberEntity(groupId, UUID.randomUUID(), MemberType.USER),
-            createMemberEntity(groupId, UUID.randomUUID(), MemberType.USER)
-        )
+        val memberEntities =
+            listOf(
+                createMemberEntity(groupId, UUID.randomUUID(), MemberType.USER),
+                createMemberEntity(groupId, UUID.randomUUID(), MemberType.USER),
+            )
         every { groupMemberRepository.findByGroupId(groupId) } returns memberEntities
 
         val result = groupService.getMembers(groupId)
@@ -151,11 +153,12 @@ class GroupServiceImplTest {
     fun `addMember persists new member`() {
         val groupId = UUID.randomUUID()
         val memberId = UUID.randomUUID()
-        val member = GroupMember(
-            groupId = groupId,
-            memberId = memberId,
-            memberType = MemberType.USER
-        )
+        val member =
+            GroupMember(
+                groupId = groupId,
+                memberId = memberId,
+                memberType = MemberType.USER,
+            )
 
         val result = groupService.addMember(groupId, member)
 
@@ -191,10 +194,11 @@ class GroupServiceImplTest {
     @Test
     fun `setMembers replaces all members`() {
         val groupId = UUID.randomUUID()
-        val newMembers = listOf(
-            GroupMember(groupId = groupId, memberId = UUID.randomUUID()),
-            GroupMember(groupId = groupId, memberId = UUID.randomUUID())
-        )
+        val newMembers =
+            listOf(
+                GroupMember(groupId = groupId, memberId = UUID.randomUUID()),
+                GroupMember(groupId = groupId, memberId = UUID.randomUUID()),
+            )
         every { groupMemberRepository.deleteByGroupId(groupId) } returns 1L
 
         val result = groupService.setMembers(groupId, newMembers)
@@ -215,8 +219,12 @@ class GroupServiceImplTest {
         assertTrue(result.isEmpty())
     }
 
-    private fun createGroupEntity(id: UUID, displayName: String, externalId: String? = null): GroupEntity {
-        return GroupEntity().apply {
+    private fun createGroupEntity(
+        id: UUID,
+        displayName: String,
+        externalId: String? = null,
+    ): GroupEntity =
+        GroupEntity().apply {
             this.id = id
             this.displayName = displayName
             this.externalId = externalId
@@ -224,15 +232,17 @@ class GroupServiceImplTest {
             this.createdOn = OffsetDateTime.now()
             this.updatedOn = OffsetDateTime.now()
         }
-    }
 
-    private fun createMemberEntity(groupId: UUID, memberId: UUID, memberType: MemberType): GroupMemberEntity {
-        return GroupMemberEntity().apply {
+    private fun createMemberEntity(
+        groupId: UUID,
+        memberId: UUID,
+        memberType: MemberType,
+    ): GroupMemberEntity =
+        GroupMemberEntity().apply {
             this.id = UUID.randomUUID()
             this.groupId = groupId
             this.memberId = memberId
             this.memberType = memberType
             this.createdOn = OffsetDateTime.now()
         }
-    }
 }

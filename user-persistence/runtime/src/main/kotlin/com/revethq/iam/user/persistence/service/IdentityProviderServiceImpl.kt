@@ -7,15 +7,12 @@ import java.util.UUID
 
 @ApplicationScoped
 class IdentityProviderServiceImpl(
-    private val identityProviderRepository: IdentityProviderRepository
+    private val identityProviderRepository: IdentityProviderRepository,
 ) : IdentityProviderService {
-
-    override fun findById(id: UUID): IdentityProvider? =
-        identityProviderRepository.findById(id)?.toDomain()
+    override fun findById(id: UUID): IdentityProvider? = identityProviderRepository.findById(id)?.toDomain()
 
     override fun findByExternalId(externalId: String): IdentityProvider? =
         identityProviderRepository.findByExternalId(externalId)?.toDomain()
 
-    override fun findByName(name: String): IdentityProvider? =
-        identityProviderRepository.findByName(name)?.toDomain()
+    override fun findByName(name: String): IdentityProvider? = identityProviderRepository.findByName(name)?.toDomain()
 }

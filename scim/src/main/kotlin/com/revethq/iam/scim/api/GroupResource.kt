@@ -13,6 +13,7 @@ import com.revethq.iam.scim.mappers.updateDomain
 import com.revethq.iam.user.domain.GroupMember
 import com.revethq.iam.user.persistence.service.GroupService
 import com.revethq.iam.user.persistence.service.UserService
+import io.quarkus.runtime.annotations.RegisterForReflection
 import jakarta.inject.Inject
 import jakarta.transaction.Transactional
 import jakarta.ws.rs.Consumes
@@ -38,7 +39,6 @@ import org.eclipse.microprofile.openapi.annotations.parameters.RequestBody
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponse
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponses
 import org.eclipse.microprofile.openapi.annotations.tags.Tag
-import io.quarkus.runtime.annotations.RegisterForReflection
 import java.util.UUID
 
 @ScimEndpoint
@@ -48,7 +48,6 @@ import java.util.UUID
 @Consumes(MediaType.APPLICATION_JSON)
 @Tag(name = "SCIM Groups", description = "SCIM 2.0 Group management endpoints")
 class GroupResource {
-
     @Inject
     lateinit var groupService: GroupService
 
@@ -68,18 +67,18 @@ class GroupResource {
         APIResponse(
             responseCode = "201",
             description = "Group created successfully",
-            content = [Content(schema = Schema(implementation = ScimGroup::class))]
+            content = [Content(schema = Schema(implementation = ScimGroup::class))],
         ),
         APIResponse(responseCode = "400", description = "Invalid request"),
-        APIResponse(responseCode = "409", description = "Group already exists")
+        APIResponse(responseCode = "409", description = "Group already exists"),
     )
     fun createGroup(
         @RequestBody(
             description = "Group to create",
             required = true,
-            content = [Content(schema = Schema(implementation = ScimGroup::class))]
+            content = [Content(schema = Schema(implementation = ScimGroup::class))],
         )
-        scimGroup: ScimGroup
+        scimGroup: ScimGroup,
     ): Response {
         // Check for existing group by displayName
         groupService.findByDisplayName(scimGroup.displayName)?.let {
@@ -97,16 +96,19 @@ class GroupResource {
         val created = groupService.create(group)
 
         // Add members if provided
-        val members = scimGroup.members?.map { member ->
-            val groupMember = member.toGroupMember(created.id)
-            groupService.addMember(created.id, groupMember)
-        } ?: emptyList()
+        val members =
+            scimGroup.members?.map { member ->
+                val groupMember = member.toGroupMember(created.id)
+                groupService.addMember(created.id, groupMember)
+            } ?: emptyList()
 
-        val memberPairs = members.map { member ->
-            member to userService.findById(member.memberId)
-        }
+        val memberPairs =
+            members.map { member ->
+                member to userService.findById(member.memberId)
+            }
 
-        return Response.status(201)
+        return Response
+            .status(201)
             .entity(created.toScimGroup(baseUrl, memberPairs))
             .build()
     }
@@ -116,45 +118,46 @@ class GroupResource {
     @APIResponses(
         APIResponse(
             responseCode = "200",
-            description = "List of groups"
+            description = "List of groups",
         ),
-        APIResponse(responseCode = "400", description = "Invalid filter syntax")
+        APIResponse(responseCode = "400", description = "Invalid filter syntax"),
     )
     fun listGroups(
         @Parameter(description = "SCIM filter expression")
         @QueryParam("filter")
         filter: String?,
-
         @Parameter(description = "1-based start index for pagination")
         @QueryParam("startIndex")
         @DefaultValue("1")
         startIndex: Int,
-
         @Parameter(description = "Number of results per page")
         @QueryParam("count")
         @DefaultValue("100")
-        count: Int
+        count: Int,
     ): ScimListResponse<ScimGroup> {
-        val result = ScimFilterHelper.filterGroups(
-            filterString = filter,
-            groupService = groupService,
-            startIndex = startIndex - 1,
-            count = count
-        )
+        val result =
+            ScimFilterHelper.filterGroups(
+                filterString = filter,
+                groupService = groupService,
+                startIndex = startIndex - 1,
+                count = count,
+            )
 
-        val scimGroups = result.items.map { group ->
-            val members = groupService.getMembers(group.id)
-            val memberPairs = members.map { member ->
-                member to userService.findById(member.memberId)
+        val scimGroups =
+            result.items.map { group ->
+                val members = groupService.getMembers(group.id)
+                val memberPairs =
+                    members.map { member ->
+                        member to userService.findById(member.memberId)
+                    }
+                group.toScimGroup(baseUrl, memberPairs)
             }
-            group.toScimGroup(baseUrl, memberPairs)
-        }
 
         return ScimListResponse(
             totalResults = result.totalCount.toInt(),
             startIndex = startIndex,
             itemsPerPage = scimGroups.size,
-            resources = scimGroups
+            resources = scimGroups,
         )
     }
 
@@ -165,23 +168,25 @@ class GroupResource {
         APIResponse(
             responseCode = "200",
             description = "Group found",
-            content = [Content(schema = Schema(implementation = ScimGroup::class))]
+            content = [Content(schema = Schema(implementation = ScimGroup::class))],
         ),
-        APIResponse(responseCode = "404", description = "Group not found")
+        APIResponse(responseCode = "404", description = "Group not found"),
     )
     fun getGroup(
         @Parameter(description = "Group ID", required = true)
         @PathParam("id")
-        id: String
+        id: String,
     ): ScimGroup {
         val uuid = UUID.fromString(id)
-        val group = groupService.findById(uuid)
-            ?: throw ScimNotFoundException("Group", id)
+        val group =
+            groupService.findById(uuid)
+                ?: throw ScimNotFoundException("Group", id)
 
         val members = groupService.getMembers(uuid)
-        val memberPairs = members.map { member ->
-            member to userService.findById(member.memberId)
-        }
+        val memberPairs =
+            members.map { member ->
+                member to userService.findById(member.memberId)
+            }
 
         return group.toScimGroup(baseUrl, memberPairs)
     }
@@ -194,26 +199,26 @@ class GroupResource {
         APIResponse(
             responseCode = "200",
             description = "Group replaced successfully",
-            content = [Content(schema = Schema(implementation = ScimGroup::class))]
+            content = [Content(schema = Schema(implementation = ScimGroup::class))],
         ),
         APIResponse(responseCode = "400", description = "Invalid request"),
-        APIResponse(responseCode = "404", description = "Group not found")
+        APIResponse(responseCode = "404", description = "Group not found"),
     )
     fun replaceGroup(
         @Parameter(description = "Group ID", required = true)
         @PathParam("id")
         id: String,
-
         @RequestBody(
             description = "Group data",
             required = true,
-            content = [Content(schema = Schema(implementation = ScimGroup::class))]
+            content = [Content(schema = Schema(implementation = ScimGroup::class))],
         )
-        scimGroup: ScimGroup
+        scimGroup: ScimGroup,
     ): ScimGroup {
         val uuid = UUID.fromString(id)
-        val existing = groupService.findById(uuid)
-            ?: throw ScimNotFoundException("Group", id)
+        val existing =
+            groupService.findById(uuid)
+                ?: throw ScimNotFoundException("Group", id)
 
         val updated = scimGroup.updateDomain(existing)
         val savedGroup = groupService.update(updated)
@@ -222,9 +227,10 @@ class GroupResource {
         val newMembers = scimGroup.members?.map { it.toGroupMember(uuid) } ?: emptyList()
         val members = groupService.setMembers(uuid, newMembers)
 
-        val memberPairs = members.map { member ->
-            member to userService.findById(member.memberId)
-        }
+        val memberPairs =
+            members.map { member ->
+                member to userService.findById(member.memberId)
+            }
 
         return savedGroup.toScimGroup(baseUrl, memberPairs)
     }
@@ -237,26 +243,26 @@ class GroupResource {
         APIResponse(
             responseCode = "200",
             description = "Group updated successfully",
-            content = [Content(schema = Schema(implementation = ScimGroup::class))]
+            content = [Content(schema = Schema(implementation = ScimGroup::class))],
         ),
         APIResponse(responseCode = "400", description = "Invalid patch operation"),
-        APIResponse(responseCode = "404", description = "Group not found")
+        APIResponse(responseCode = "404", description = "Group not found"),
     )
     fun patchGroup(
         @Parameter(description = "Group ID", required = true)
         @PathParam("id")
         id: String,
-
         @RequestBody(
             description = "Patch operations",
             required = true,
-            content = [Content(schema = Schema(implementation = ScimPatchOp::class))]
+            content = [Content(schema = Schema(implementation = ScimPatchOp::class))],
         )
-        patchOp: ScimPatchOp
+        patchOp: ScimPatchOp,
     ): ScimGroup {
         val uuid = UUID.fromString(id)
-        var group = groupService.findById(uuid)
-            ?: throw ScimNotFoundException("Group", id)
+        var group =
+            groupService.findById(uuid)
+                ?: throw ScimNotFoundException("Group", id)
 
         for (operation in patchOp.operations) {
             when (operation.op.lowercase()) {
@@ -273,12 +279,13 @@ class GroupResource {
                         "members" -> {
                             @Suppress("UNCHECKED_CAST")
                             val memberList = operation.value as? List<Map<String, Any?>> ?: emptyList()
-                            val newMembers = memberList.map { memberMap ->
-                                GroupMember(
-                                    groupId = uuid,
-                                    memberId = UUID.fromString(memberMap["value"].toString())
-                                )
-                            }
+                            val newMembers =
+                                memberList.map { memberMap ->
+                                    GroupMember(
+                                        groupId = uuid,
+                                        memberId = UUID.fromString(memberMap["value"].toString()),
+                                    )
+                                }
                             groupService.setMembers(uuid, newMembers)
                         }
                     }
@@ -289,10 +296,11 @@ class GroupResource {
                             @Suppress("UNCHECKED_CAST")
                             val memberList = operation.value as? List<Map<String, Any?>> ?: emptyList()
                             for (memberMap in memberList) {
-                                val member = GroupMember(
-                                    groupId = uuid,
-                                    memberId = UUID.fromString(memberMap["value"].toString())
-                                )
+                                val member =
+                                    GroupMember(
+                                        groupId = uuid,
+                                        memberId = UUID.fromString(memberMap["value"].toString()),
+                                    )
                                 groupService.addMember(uuid, member)
                             }
                         }
@@ -313,9 +321,10 @@ class GroupResource {
         // Refresh group and get updated members
         group = groupService.findById(uuid)!!
         val members = groupService.getMembers(uuid)
-        val memberPairs = members.map { member ->
-            member to userService.findById(member.memberId)
-        }
+        val memberPairs =
+            members.map { member ->
+                member to userService.findById(member.memberId)
+            }
 
         return group.toScimGroup(baseUrl, memberPairs)
     }
@@ -326,12 +335,12 @@ class GroupResource {
     @Operation(summary = "Delete group", description = "Delete a SCIM group")
     @APIResponses(
         APIResponse(responseCode = "204", description = "Group deleted successfully"),
-        APIResponse(responseCode = "404", description = "Group not found")
+        APIResponse(responseCode = "404", description = "Group not found"),
     )
     fun deleteGroup(
         @Parameter(description = "Group ID", required = true)
         @PathParam("id")
-        id: String
+        id: String,
     ): Response {
         val uuid = UUID.fromString(id)
         if (!groupService.delete(uuid)) {

@@ -12,7 +12,6 @@ import io.mockk.mockk
 import io.mockk.runs
 import io.mockk.slot
 import io.mockk.verify
-import io.quarkus.hibernate.orm.panache.kotlin.PanacheQuery
 import java.util.UUID
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -22,7 +21,6 @@ import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
 class PolicyServiceImplTest {
-
     private val policyRepository = mockk<PolicyRepository>(relaxed = true)
     private val policyAttachmentRepository = mockk<PolicyAttachmentRepository>(relaxed = true)
     private val service = PolicyServiceImpl(policyRepository, policyAttachmentRepository)
@@ -114,16 +112,18 @@ class PolicyServiceImplTest {
         assertFalse(result)
     }
 
-    private fun createPolicy(name: String): Policy = Policy(
-        id = UUID.randomUUID(),
-        name = name,
-        version = "2026-01-15",
-        statements = listOf(
-            Statement(
-                effect = Effect.ALLOW,
-                actions = listOf("iam:*"),
-                resources = listOf("urn:revet:iam:*:user/*")
-            )
+    private fun createPolicy(name: String): Policy =
+        Policy(
+            id = UUID.randomUUID(),
+            name = name,
+            version = "2026-01-15",
+            statements =
+                listOf(
+                    Statement(
+                        effect = Effect.ALLOW,
+                        actions = listOf("iam:*"),
+                        resources = listOf("urn:revet:iam:*:user/*"),
+                    ),
+                ),
         )
-    )
 }

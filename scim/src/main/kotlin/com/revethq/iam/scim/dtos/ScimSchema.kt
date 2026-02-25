@@ -9,7 +9,7 @@ data class ScimSchema(
     val name: String? = null,
     val description: String? = null,
     val attributes: List<ScimSchemaAttribute> = emptyList(),
-    val meta: ScimMeta? = null
+    val meta: ScimMeta? = null,
 ) {
     companion object {
         const val SCHEMA_SCHEMA = "urn:ietf:params:scim:schemas:core:2.0:Schema"
@@ -29,5 +29,5 @@ data class ScimSchemaAttribute(
     val uniqueness: String = "none",
     val subAttributes: List<ScimSchemaAttribute>? = null,
     val referenceTypes: List<String>? = null,
-    val canonicalValues: List<String>? = null
+    val canonicalValues: List<String>? = null,
 )

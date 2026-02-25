@@ -11,5 +11,5 @@ data class IdentityProviderLink(
     var externalId: String,
     var metadata: Metadata = Metadata(),
     var createdOn: OffsetDateTime? = null,
-    var updatedOn: OffsetDateTime? = null
+    var updatedOn: OffsetDateTime? = null,
 )

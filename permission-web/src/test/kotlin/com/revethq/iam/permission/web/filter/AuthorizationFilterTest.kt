@@ -19,7 +19,6 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class AuthorizationFilterTest {
-
     private val policyEvaluator = mockk<PolicyEvaluator>()
     private val authorizationContext = AuthorizationContext()
     private val resourceInfo = mockk<ResourceInfo>()
@@ -28,11 +27,12 @@ class AuthorizationFilterTest {
     private val securityContext = mockk<SecurityContext>()
     private val principal = mockk<Principal>()
 
-    private val filter = AuthorizationFilter().apply {
-        this.policyEvaluator = this@AuthorizationFilterTest.policyEvaluator
-        this.authorizationContext = this@AuthorizationFilterTest.authorizationContext
-        this.resourceInfo = this@AuthorizationFilterTest.resourceInfo
-    }
+    private val filter =
+        AuthorizationFilter().apply {
+            this.policyEvaluator = this@AuthorizationFilterTest.policyEvaluator
+            this.authorizationContext = this@AuthorizationFilterTest.authorizationContext
+            this.resourceInfo = this@AuthorizationFilterTest.resourceInfo
+        }
 
     @Test
     fun `allow access when PolicyEvaluator returns ALLOW`() {
@@ -75,17 +75,20 @@ class AuthorizationFilterTest {
     fun `build correct AuthorizationRequest from annotation`() {
         setupMocks("iam:DeleteUser", "urn:revet:iam::user/{userId}")
         every { principal.name } returns "urn:revet:iam::user/admin"
-        every { uriInfo.pathParameters } returns MultivaluedHashMap<String, String>().apply {
-            add("userId", "alice")
-        }
+        every { uriInfo.pathParameters } returns
+            MultivaluedHashMap<String, String>().apply {
+                add("userId", "alice")
+            }
         every { policyEvaluator.evaluate(any()) } returns AuthorizationResult(AuthorizationDecision.ALLOW)
 
         filter.filter(requestContext)
 
         verify {
-            policyEvaluator.evaluate(match {
-                it.action == "iam:DeleteUser" && it.resourceUrn == "urn:revet:iam::user/alice"
-            })
+            policyEvaluator.evaluate(
+                match {
+                    it.action == "iam:DeleteUser" && it.resourceUrn == "urn:revet:iam::user/alice"
+                },
+            )
         }
     }
 
@@ -102,7 +105,10 @@ class AuthorizationFilterTest {
         assertEquals(401, responseSlot.captured.status)
     }
 
-    private fun setupMocks(action: String, resource: String) {
+    private fun setupMocks(
+        action: String,
+        resource: String,
+    ) {
         val annotation = mockk<RequiresPermission>()
         every { annotation.action } returns action
         every { annotation.resource } returns resource
@@ -120,7 +126,10 @@ class AuthorizationFilterTest {
         every { requestContext.getHeaderString(any()) } returns null
     }
 
-    private fun setupMocksWithoutPrincipal(action: String, resource: String) {
+    private fun setupMocksWithoutPrincipal(
+        action: String,
+        resource: String,
+    ) {
         val annotation = mockk<RequiresPermission>()
         every { annotation.action } returns action
         every { annotation.resource } returns resource

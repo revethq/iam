@@ -9,7 +9,7 @@ data class ScimGroup(
     val externalId: String? = null,
     val meta: ScimMeta? = null,
     val displayName: String,
-    val members: List<ScimMember>? = null
+    val members: List<ScimMember>? = null,
 ) {
     companion object {
         const val SCHEMA_GROUP = "urn:ietf:params:scim:schemas:core:2.0:Group"

@@ -20,7 +20,6 @@ import java.util.UUID
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 class ServiceAccountPolicyResource {
-
     @Inject
     lateinit var serviceAccountService: ServiceAccountService
 
@@ -32,28 +31,30 @@ class ServiceAccountPolicyResource {
     fun listPoliciesForServiceAccount(
         @PathParam("id") id: String,
         @QueryParam("page") @DefaultValue("0") page: Int,
-        @QueryParam("size") @DefaultValue("20") size: Int
+        @QueryParam("size") @DefaultValue("20") size: Int,
     ): PageResponse<AttachedPolicyResponse> {
         val uuid = UUID.fromString(id)
-        val serviceAccount = serviceAccountService.findById(uuid)
-            ?: throw ServiceAccountNotFoundException(id)
+        val serviceAccount =
+            serviceAccountService.findById(uuid)
+                ?: throw ServiceAccountNotFoundException(id)
 
         val allPolicies = policyAttachmentService.listAttachedPoliciesForPrincipal(serviceAccount.toUrn())
 
         val start = page * size
         val end = minOf(start + size + 1, allPolicies.size)
-        val pageContent = if (start < allPolicies.size) {
-            allPolicies.subList(start, minOf(start + size, allPolicies.size))
-        } else {
-            emptyList()
-        }
+        val pageContent =
+            if (start < allPolicies.size) {
+                allPolicies.subList(start, minOf(start + size, allPolicies.size))
+            } else {
+                emptyList()
+            }
         val hasMore = end > start + size
 
         return PageResponse(
             content = pageContent.map { AttachedPolicyResponse.fromDomain(it) },
             page = page,
             size = size,
-            hasMore = hasMore
+            hasMore = hasMore,
         )
     }
 }

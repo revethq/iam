@@ -6,9 +6,17 @@ import java.util.UUID
 
 interface ServiceAccountService {
     fun create(serviceAccount: ServiceAccount): ServiceAccount
+
     fun findById(id: UUID): ServiceAccount?
-    fun list(startIndex: Int, count: Int): Page<ServiceAccount>
+
+    fun list(
+        startIndex: Int,
+        count: Int,
+    ): Page<ServiceAccount>
+
     fun update(serviceAccount: ServiceAccount): ServiceAccount
+
     fun delete(id: UUID): Boolean
+
     fun count(): Long
 }

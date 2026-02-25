@@ -14,7 +14,6 @@ import java.util.UUID
 @Entity
 @Table(name = "revet_service_accounts")
 open class ServiceAccountEntity {
-
     @Id
     lateinit var id: UUID
 
@@ -37,26 +36,28 @@ open class ServiceAccountEntity {
     @Column(name = "updated_on", nullable = false)
     lateinit var updatedOn: OffsetDateTime
 
-    fun toDomain(): ServiceAccount = ServiceAccount(
-        id = id,
-        name = name,
-        description = description,
-        tenantId = tenantId,
-        metadata = metadata,
-        createdOn = createdOn,
-        updatedOn = updatedOn
-    )
+    fun toDomain(): ServiceAccount =
+        ServiceAccount(
+            id = id,
+            name = name,
+            description = description,
+            tenantId = tenantId,
+            metadata = metadata,
+            createdOn = createdOn,
+            updatedOn = updatedOn,
+        )
 
     companion object {
-        fun fromDomain(serviceAccount: ServiceAccount): ServiceAccountEntity = ServiceAccountEntity().apply {
-            val now = OffsetDateTime.now()
-            id = serviceAccount.id
-            name = serviceAccount.name
-            description = serviceAccount.description
-            tenantId = serviceAccount.tenantId
-            metadata = serviceAccount.metadata
-            createdOn = serviceAccount.createdOn ?: now
-            updatedOn = serviceAccount.updatedOn ?: now
-        }
+        fun fromDomain(serviceAccount: ServiceAccount): ServiceAccountEntity =
+            ServiceAccountEntity().apply {
+                val now = OffsetDateTime.now()
+                id = serviceAccount.id
+                name = serviceAccount.name
+                description = serviceAccount.description
+                tenantId = serviceAccount.tenantId
+                metadata = serviceAccount.metadata
+                createdOn = serviceAccount.createdOn ?: now
+                updatedOn = serviceAccount.updatedOn ?: now
+            }
     }
 }

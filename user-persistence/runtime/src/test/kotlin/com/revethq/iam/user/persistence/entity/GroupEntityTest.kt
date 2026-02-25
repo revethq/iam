@@ -10,17 +10,17 @@ import kotlin.test.assertNotNull
 import kotlin.test.assertNull
 
 class GroupEntityTest {
-
     @Test
     fun `toDomain maps all fields correctly`() {
-        val entity = GroupEntity().apply {
-            id = UUID.randomUUID()
-            displayName = "Engineering"
-            externalId = "ext-group-123"
-            metadata = Metadata(properties = mapOf("key" to "value"))
-            createdOn = OffsetDateTime.now().minusDays(1)
-            updatedOn = OffsetDateTime.now()
-        }
+        val entity =
+            GroupEntity().apply {
+                id = UUID.randomUUID()
+                displayName = "Engineering"
+                externalId = "ext-group-123"
+                metadata = Metadata(properties = mapOf("key" to "value"))
+                createdOn = OffsetDateTime.now().minusDays(1)
+                updatedOn = OffsetDateTime.now()
+            }
 
         val domain = entity.toDomain()
 
@@ -34,14 +34,15 @@ class GroupEntityTest {
 
     @Test
     fun `toDomain handles null externalId`() {
-        val entity = GroupEntity().apply {
-            id = UUID.randomUUID()
-            displayName = "Marketing"
-            externalId = null
-            metadata = Metadata()
-            createdOn = OffsetDateTime.now()
-            updatedOn = OffsetDateTime.now()
-        }
+        val entity =
+            GroupEntity().apply {
+                id = UUID.randomUUID()
+                displayName = "Marketing"
+                externalId = null
+                metadata = Metadata()
+                createdOn = OffsetDateTime.now()
+                updatedOn = OffsetDateTime.now()
+            }
 
         val domain = entity.toDomain()
 
@@ -51,14 +52,15 @@ class GroupEntityTest {
     @Test
     fun `fromDomain maps all fields correctly`() {
         val now = OffsetDateTime.now()
-        val group = Group(
-            id = UUID.randomUUID(),
-            displayName = "Sales",
-            externalId = "ext-sales-456",
-            metadata = Metadata(properties = mapOf("department" to "revenue")),
-            createdOn = now.minusHours(2),
-            updatedOn = now
-        )
+        val group =
+            Group(
+                id = UUID.randomUUID(),
+                displayName = "Sales",
+                externalId = "ext-sales-456",
+                metadata = Metadata(properties = mapOf("department" to "revenue")),
+                createdOn = now.minusHours(2),
+                updatedOn = now,
+            )
 
         val entity = GroupEntity.fromDomain(group)
 
@@ -72,12 +74,13 @@ class GroupEntityTest {
 
     @Test
     fun `fromDomain sets timestamps when null`() {
-        val group = Group(
-            id = UUID.randomUUID(),
-            displayName = "Support",
-            createdOn = null,
-            updatedOn = null
-        )
+        val group =
+            Group(
+                id = UUID.randomUUID(),
+                displayName = "Support",
+                createdOn = null,
+                updatedOn = null,
+            )
 
         val entity = GroupEntity.fromDomain(group)
 
@@ -87,11 +90,12 @@ class GroupEntityTest {
 
     @Test
     fun `fromDomain handles null externalId`() {
-        val group = Group(
-            id = UUID.randomUUID(),
-            displayName = "HR",
-            externalId = null
-        )
+        val group =
+            Group(
+                id = UUID.randomUUID(),
+                displayName = "HR",
+                externalId = null,
+            )
 
         val entity = GroupEntity.fromDomain(group)
 
@@ -100,14 +104,15 @@ class GroupEntityTest {
 
     @Test
     fun `roundtrip preserves data`() {
-        val original = Group(
-            id = UUID.randomUUID(),
-            displayName = "DevOps",
-            externalId = "devops-team",
-            metadata = Metadata(properties = mapOf("oncall" to "true")),
-            createdOn = OffsetDateTime.now().minusDays(30),
-            updatedOn = OffsetDateTime.now()
-        )
+        val original =
+            Group(
+                id = UUID.randomUUID(),
+                displayName = "DevOps",
+                externalId = "devops-team",
+                metadata = Metadata(properties = mapOf("oncall" to "true")),
+                createdOn = OffsetDateTime.now().minusDays(30),
+                updatedOn = OffsetDateTime.now(),
+            )
 
         val entity = GroupEntity.fromDomain(original)
         val restored = entity.toDomain()

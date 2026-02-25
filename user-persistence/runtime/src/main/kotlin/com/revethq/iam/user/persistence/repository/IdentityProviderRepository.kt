@@ -7,10 +7,7 @@ import java.util.UUID
 
 @ApplicationScoped
 class IdentityProviderRepository : PanacheRepositoryBase<IdentityProviderEntity, UUID> {
+    fun findByName(name: String): IdentityProviderEntity? = find("name", name).firstResult()
 
-    fun findByName(name: String): IdentityProviderEntity? =
-        find("name", name).firstResult()
-
-    fun findByExternalId(externalId: String): IdentityProviderEntity? =
-        find("externalId", externalId).firstResult()
+    fun findByExternalId(externalId: String): IdentityProviderEntity? = find("externalId", externalId).firstResult()
 }

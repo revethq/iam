@@ -8,13 +8,12 @@ import java.util.UUID
 
 @ApplicationScoped
 class ProfileRepository : PanacheRepositoryBase<ProfileEntity, UUID> {
+    fun findByResource(resource: UUID): List<ProfileEntity> = list("resource", resource)
 
-    fun findByResource(resource: UUID): List<ProfileEntity> =
-        list("resource", resource)
+    fun findByProfileType(profileType: ProfileType): List<ProfileEntity> = list("profileType", profileType)
 
-    fun findByProfileType(profileType: ProfileType): List<ProfileEntity> =
-        list("profileType", profileType)
-
-    fun findByResourceAndProfileType(resource: UUID, profileType: ProfileType): ProfileEntity? =
-        find("resource = ?1 and profileType = ?2", resource, profileType).firstResult()
+    fun findByResourceAndProfileType(
+        resource: UUID,
+        profileType: ProfileType,
+    ): ProfileEntity? = find("resource = ?1 and profileType = ?2", resource, profileType).firstResult()
 }

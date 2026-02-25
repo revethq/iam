@@ -7,10 +7,7 @@ import java.util.UUID
 
 @ApplicationScoped
 class GroupRepository : PanacheRepositoryBase<GroupEntity, UUID> {
+    fun findByExternalId(externalId: String): GroupEntity? = find("externalId", externalId).firstResult()
 
-    fun findByExternalId(externalId: String): GroupEntity? =
-        find("externalId", externalId).firstResult()
-
-    fun findByDisplayName(displayName: String): GroupEntity? =
-        find("displayName", displayName).firstResult()
+    fun findByDisplayName(displayName: String): GroupEntity? = find("displayName", displayName).firstResult()
 }

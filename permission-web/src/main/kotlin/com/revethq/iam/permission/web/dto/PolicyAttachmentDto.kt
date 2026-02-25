@@ -5,7 +5,7 @@ import java.time.OffsetDateTime
 import java.util.UUID
 
 data class AttachPolicyRequest(
-    val principalUrn: String
+    val principalUrn: String,
 )
 
 data class PolicyAttachmentResponse(
@@ -13,19 +13,20 @@ data class PolicyAttachmentResponse(
     val policyId: UUID,
     val principalUrn: String,
     val attachedOn: OffsetDateTime?,
-    val attachedBy: String?
+    val attachedBy: String?,
 ) {
     companion object {
-        fun fromDomain(attachment: PolicyAttachment): PolicyAttachmentResponse = PolicyAttachmentResponse(
-            id = attachment.id,
-            policyId = attachment.policyId,
-            principalUrn = attachment.principalUrn,
-            attachedOn = attachment.attachedOn,
-            attachedBy = attachment.attachedBy
-        )
+        fun fromDomain(attachment: PolicyAttachment): PolicyAttachmentResponse =
+            PolicyAttachmentResponse(
+                id = attachment.id,
+                policyId = attachment.policyId,
+                principalUrn = attachment.principalUrn,
+                attachedOn = attachment.attachedOn,
+                attachedBy = attachment.attachedBy,
+            )
     }
 }
 
 data class PolicyAttachmentListResponse(
-    val items: List<PolicyAttachmentResponse>
+    val items: List<PolicyAttachmentResponse>,
 )

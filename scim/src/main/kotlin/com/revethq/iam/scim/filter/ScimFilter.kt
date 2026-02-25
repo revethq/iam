@@ -6,9 +6,8 @@ sealed class ScimFilter {
 
 data class EqFilter(
     val attribute: String,
-    val value: String
+    val value: String,
 ) : ScimFilter() {
-
     override fun matches(attributes: Map<String, Any?>): Boolean {
         val attrValue = resolveAttribute(attributes, attribute)
         return when (attrValue) {
@@ -20,21 +19,26 @@ data class EqFilter(
         }
     }
 
-    private fun resolveAttribute(attributes: Map<String, Any?>, path: String): Any? {
+    private fun resolveAttribute(
+        attributes: Map<String, Any?>,
+        path: String,
+    ): Any? {
         val parts = path.split(".")
         var current: Any? = attributes
 
         for (part in parts) {
-            current = when (current) {
-                is Map<*, *> -> current[part]
-                is List<*> -> {
-                    // For multi-valued attributes like emails, find first match
-                    current.filterIsInstance<Map<*, *>>()
-                        .mapNotNull { it[part] }
-                        .firstOrNull()
+            current =
+                when (current) {
+                    is Map<*, *> -> current[part]
+                    is List<*> -> {
+                        // For multi-valued attributes like emails, find first match
+                        current
+                            .filterIsInstance<Map<*, *>>()
+                            .mapNotNull { it[part] }
+                            .firstOrNull()
+                    }
+                    else -> return null
                 }
-                else -> return null
-            }
         }
         return current
     }
@@ -42,9 +46,8 @@ data class EqFilter(
 
 data class CoFilter(
     val attribute: String,
-    val value: String
+    val value: String,
 ) : ScimFilter() {
-
     override fun matches(attributes: Map<String, Any?>): Boolean {
         val attrValue = resolveAttribute(attributes, attribute)
         return when (attrValue) {
@@ -54,20 +57,25 @@ data class CoFilter(
         }
     }
 
-    private fun resolveAttribute(attributes: Map<String, Any?>, path: String): Any? {
+    private fun resolveAttribute(
+        attributes: Map<String, Any?>,
+        path: String,
+    ): Any? {
         val parts = path.split(".")
         var current: Any? = attributes
 
         for (part in parts) {
-            current = when (current) {
-                is Map<*, *> -> current[part]
-                is List<*> -> {
-                    current.filterIsInstance<Map<*, *>>()
-                        .mapNotNull { it[part] }
-                        .firstOrNull()
+            current =
+                when (current) {
+                    is Map<*, *> -> current[part]
+                    is List<*> -> {
+                        current
+                            .filterIsInstance<Map<*, *>>()
+                            .mapNotNull { it[part] }
+                            .firstOrNull()
+                    }
+                    else -> return null
                 }
-                else -> return null
-            }
         }
         return current
     }
@@ -75,9 +83,8 @@ data class CoFilter(
 
 data class SwFilter(
     val attribute: String,
-    val value: String
+    val value: String,
 ) : ScimFilter() {
-
     override fun matches(attributes: Map<String, Any?>): Boolean {
         val attrValue = resolveAttribute(attributes, attribute)
         return when (attrValue) {
@@ -87,20 +94,25 @@ data class SwFilter(
         }
     }
 
-    private fun resolveAttribute(attributes: Map<String, Any?>, path: String): Any? {
+    private fun resolveAttribute(
+        attributes: Map<String, Any?>,
+        path: String,
+    ): Any? {
         val parts = path.split(".")
         var current: Any? = attributes
 
         for (part in parts) {
-            current = when (current) {
-                is Map<*, *> -> current[part]
-                is List<*> -> {
-                    current.filterIsInstance<Map<*, *>>()
-                        .mapNotNull { it[part] }
-                        .firstOrNull()
+            current =
+                when (current) {
+                    is Map<*, *> -> current[part]
+                    is List<*> -> {
+                        current
+                            .filterIsInstance<Map<*, *>>()
+                            .mapNotNull { it[part] }
+                            .firstOrNull()
+                    }
+                    else -> return null
                 }
-                else -> return null
-            }
         }
         return current
     }
@@ -108,20 +120,14 @@ data class SwFilter(
 
 data class AndFilter(
     val left: ScimFilter,
-    val right: ScimFilter
+    val right: ScimFilter,
 ) : ScimFilter() {
-
-    override fun matches(attributes: Map<String, Any?>): Boolean {
-        return left.matches(attributes) && right.matches(attributes)
-    }
+    override fun matches(attributes: Map<String, Any?>): Boolean = left.matches(attributes) && right.matches(attributes)
 }
 
 data class OrFilter(
     val left: ScimFilter,
-    val right: ScimFilter
+    val right: ScimFilter,
 ) : ScimFilter() {
-
-    override fun matches(attributes: Map<String, Any?>): Boolean {
-        return left.matches(attributes) || right.matches(attributes)
-    }
+    override fun matches(attributes: Map<String, Any?>): Boolean = left.matches(attributes) || right.matches(attributes)
 }

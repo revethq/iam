@@ -15,36 +15,43 @@ import java.util.UUID
 @ApplicationScoped
 class PolicyAttachmentServiceImpl(
     private val policyAttachmentRepository: PolicyAttachmentRepository,
-    private val policyRepository: PolicyRepository
+    private val policyRepository: PolicyRepository,
 ) : PolicyAttachmentService {
-
     private val log = Logger.getLogger(PolicyAttachmentServiceImpl::class.java)
 
     @Transactional
-    override fun attach(policyId: UUID, principalUrn: String, attachedBy: String?): PolicyAttachment {
+    override fun attach(
+        policyId: UUID,
+        principalUrn: String,
+        attachedBy: String?,
+    ): PolicyAttachment {
         val existing = policyAttachmentRepository.findByPolicyIdAndPrincipalUrn(policyId, principalUrn)
         if (existing != null) {
             throw IllegalStateException("Policy $policyId is already attached to principal $principalUrn")
         }
 
-        val attachment = PolicyAttachment(
-            id = UUID.randomUUID(),
-            policyId = policyId,
-            principalUrn = principalUrn,
-            attachedBy = attachedBy
-        )
+        val attachment =
+            PolicyAttachment(
+                id = UUID.randomUUID(),
+                policyId = policyId,
+                principalUrn = principalUrn,
+                attachedBy = attachedBy,
+            )
         val entity = PolicyAttachmentEntity.fromDomain(attachment)
         policyAttachmentRepository.persist(entity)
         return entity.toDomain()
     }
 
-    override fun findById(attachmentId: UUID): PolicyAttachment? =
-        policyAttachmentRepository.findById(attachmentId)?.toDomain()
+    override fun findById(attachmentId: UUID): PolicyAttachment? = policyAttachmentRepository.findById(attachmentId)?.toDomain()
 
     @Transactional
-    override fun detach(policyId: UUID, attachmentId: UUID): Boolean {
-        val attachment = policyAttachmentRepository.findById(attachmentId)
-            ?: return false
+    override fun detach(
+        policyId: UUID,
+        attachmentId: UUID,
+    ): Boolean {
+        val attachment =
+            policyAttachmentRepository.findById(attachmentId)
+                ?: return false
         if (attachment.policyId != policyId) {
             return false
         }
@@ -58,10 +65,11 @@ class PolicyAttachmentServiceImpl(
         log.info("Looking up policies for principal: $principalUrn")
         val attachments = policyAttachmentRepository.findByPrincipalUrn(principalUrn)
         log.info("Found ${attachments.size} attachments for principal")
-        val policies = attachments.mapNotNull { attachment ->
-            log.info("Loading policy: ${attachment.policyId}")
-            policyRepository.findById(attachment.policyId)?.toDomain()
-        }
+        val policies =
+            attachments.mapNotNull { attachment ->
+                log.info("Loading policy: ${attachment.policyId}")
+                policyRepository.findById(attachment.policyId)?.toDomain()
+            }
         log.info("Loaded ${policies.size} policies")
         return policies
     }
@@ -77,7 +85,7 @@ class PolicyAttachmentServiceImpl(
                     attachmentId = attachment.id,
                     policy = policy,
                     attachedOn = attachment.attachedOn,
-                    attachedBy = attachment.attachedBy
+                    attachedBy = attachment.attachedBy,
                 )
             } else {
                 null
@@ -85,6 +93,8 @@ class PolicyAttachmentServiceImpl(
         }
     }
 
-    override fun isAttached(policyId: UUID, principalUrn: String): Boolean =
-        policyAttachmentRepository.findByPolicyIdAndPrincipalUrn(policyId, principalUrn) != null
+    override fun isAttached(
+        policyId: UUID,
+        principalUrn: String,
+    ): Boolean = policyAttachmentRepository.findByPolicyIdAndPrincipalUrn(policyId, principalUrn) != null
 }

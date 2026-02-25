@@ -2,7 +2,7 @@ import org.jboss.jandex.IndexWriter
 import org.jboss.jandex.Indexer
 
 plugins {
-    kotlin("jvm")
+    alias(libs.plugins.kotlin.jvm)
 }
 
 buildscript {
@@ -11,24 +11,22 @@ buildscript {
     }
 }
 
-val quarkusVersion: String by project
-
 dependencies {
     api(project(":service-account"))
     api(project(":service-account-persistence"))
     api(project(":user-persistence:runtime"))
     api(project(":permission-web"))
 
-    implementation(platform("io.quarkus:quarkus-bom:${quarkusVersion}"))
-    implementation("io.quarkus:quarkus-hibernate-orm-panache-kotlin")
-    implementation("jakarta.ws.rs:jakarta.ws.rs-api")
-    implementation("jakarta.enterprise:jakarta.enterprise.cdi-api")
-    implementation("jakarta.annotation:jakarta.annotation-api")
-    implementation("jakarta.transaction:jakarta.transaction-api")
+    implementation(platform(libs.quarkus.bom))
+    implementation(libs.quarkus.hibernate.orm.panache.kotlin)
+    implementation(libs.jakarta.ws.rs.api)
+    implementation(libs.jakarta.enterprise.cdi.api)
+    implementation(libs.jakarta.annotation.api)
+    implementation(libs.jakarta.transaction.api)
 
     testImplementation(kotlin("test"))
-    testImplementation("io.mockk:mockk:1.13.8")
-    testRuntimeOnly("org.jboss.resteasy:resteasy-core:6.2.7.Final")
+    testImplementation(libs.mockk)
+    testRuntimeOnly(libs.resteasy.core)
 }
 
 tasks.register("jandex") {
@@ -39,16 +37,25 @@ tasks.register("jandex") {
 
     doLast {
         val indexer = Indexer()
-        val classesDir = layout.buildDirectory.dir("classes/kotlin/main").get().asFile
+        val classesDir =
+            layout.buildDirectory
+                .dir("classes/kotlin/main")
+                .get()
+                .asFile
 
-        classesDir.walkTopDown()
+        classesDir
+            .walkTopDown()
             .filter { it.isFile && it.extension == "class" }
             .forEach { classFile ->
                 classFile.inputStream().use { indexer.index(it) }
             }
 
         val index = indexer.complete()
-        val metaInfDir = layout.buildDirectory.dir("resources/main/META-INF").get().asFile
+        val metaInfDir =
+            layout.buildDirectory
+                .dir("resources/main/META-INF")
+                .get()
+                .asFile
         metaInfDir.mkdirs()
 
         val jandexFile = File(metaInfDir, "jandex.idx")

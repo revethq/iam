@@ -13,9 +13,8 @@ import java.util.UUID
 @ApplicationScoped
 class PolicyServiceImpl(
     private val policyRepository: PolicyRepository,
-    private val policyAttachmentRepository: PolicyAttachmentRepository
+    private val policyAttachmentRepository: PolicyAttachmentRepository,
 ) : PolicyService {
-
     @Transactional
     override fun create(policy: Policy): Policy {
         val entity = PolicyEntity.fromDomain(policy)
@@ -23,36 +22,45 @@ class PolicyServiceImpl(
         return entity.toDomain()
     }
 
-    override fun findById(id: UUID): Policy? =
-        policyRepository.findById(id)?.toDomain()
+    override fun findById(id: UUID): Policy? = policyRepository.findById(id)?.toDomain()
 
-    override fun findByName(name: String, tenantId: String?): Policy? =
-        policyRepository.findByNameAndTenantId(name, tenantId)?.toDomain()
+    override fun findByName(
+        name: String,
+        tenantId: String?,
+    ): Policy? = policyRepository.findByNameAndTenantId(name, tenantId)?.toDomain()
 
-    override fun list(startIndex: Int, count: Int, tenantId: String?): Page<Policy> {
+    override fun list(
+        startIndex: Int,
+        count: Int,
+        tenantId: String?,
+    ): Page<Policy> {
         val total = count(tenantId)
         val pageNumber = if (count > 0) startIndex / count else 0
-        val entities = if (tenantId != null) {
-            policyRepository.find("tenantId", tenantId)
-                .page(pageNumber, count)
-                .list()
-        } else {
-            policyRepository.findAll()
-                .page(pageNumber, count)
-                .list()
-        }
+        val entities =
+            if (tenantId != null) {
+                policyRepository
+                    .find("tenantId", tenantId)
+                    .page(pageNumber, count)
+                    .list()
+            } else {
+                policyRepository
+                    .findAll()
+                    .page(pageNumber, count)
+                    .list()
+            }
         return Page(
             items = entities.map { it.toDomain() },
             totalCount = total,
             startIndex = startIndex,
-            itemsPerPage = count
+            itemsPerPage = count,
         )
     }
 
     @Transactional
     override fun update(policy: Policy): Policy {
-        val existing = policyRepository.findById(policy.id)
-            ?: throw IllegalArgumentException("Policy not found: ${policy.id}")
+        val existing =
+            policyRepository.findById(policy.id)
+                ?: throw IllegalArgumentException("Policy not found: ${policy.id}")
         existing.name = policy.name
         existing.description = policy.description
         existing.version = policy.version

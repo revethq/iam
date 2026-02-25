@@ -15,10 +15,9 @@ data class Urn(
     val service: String,
     val tenant: String,
     val resourceType: String,
-    val resourceId: String
+    val resourceId: String,
 ) {
-    override fun toString(): String =
-        "urn:$namespace:$service:$tenant:$resourceType/$resourceId"
+    override fun toString(): String = "urn:$namespace:$service:$tenant:$resourceType/$resourceId"
 
     /**
      * Check if this URN matches a pattern URN.
@@ -42,12 +41,18 @@ data class Urn(
         return matches(parsed)
     }
 
-    private fun matchesComponent(value: String, pattern: String): Boolean {
+    private fun matchesComponent(
+        value: String,
+        pattern: String,
+    ): Boolean {
         if (pattern == "*") return true
         return value == pattern
     }
 
-    private fun matchesResourceId(value: String, pattern: String): Boolean {
+    private fun matchesResourceId(
+        value: String,
+        pattern: String,
+    ): Boolean {
         // ** matches anything (zero or more segments)
         if (pattern == "**") return true
 
@@ -64,7 +69,7 @@ data class Urn(
         valueSegments: List<String>,
         patternSegments: List<String>,
         valueIndex: Int,
-        patternIndex: Int
+        patternIndex: Int,
     ): Boolean {
         // Base case: both exhausted
         if (patternIndex >= patternSegments.size && valueIndex >= valueSegments.size) {
@@ -125,7 +130,7 @@ data class Urn(
                 service = match.groupValues[2],
                 tenant = match.groupValues[3],
                 resourceType = match.groupValues[4],
-                resourceId = match.groupValues[5]
+                resourceId = match.groupValues[5],
             )
         }
 
@@ -133,9 +138,8 @@ data class Urn(
          * Parse a URN string into a Urn object.
          * Throws IllegalArgumentException if the string is not a valid URN.
          */
-        fun parseOrThrow(urn: String): Urn {
-            return parse(urn)
+        fun parseOrThrow(urn: String): Urn =
+            parse(urn)
                 ?: throw IllegalArgumentException("Invalid URN format: $urn")
-        }
     }
 }

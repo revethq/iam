@@ -5,5 +5,5 @@ package com.revethq.iam.permission.domain
  */
 enum class Effect {
     ALLOW,
-    DENY
+    DENY,
 }

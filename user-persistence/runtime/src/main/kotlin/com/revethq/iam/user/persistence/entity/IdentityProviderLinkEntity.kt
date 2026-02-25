@@ -14,7 +14,6 @@ import java.util.UUID
 @Entity
 @Table(name = "revet_identity_provider_links")
 open class IdentityProviderLinkEntity {
-
     @Id
     lateinit var id: UUID
 
@@ -37,26 +36,28 @@ open class IdentityProviderLinkEntity {
     @Column(name = "updated_on", nullable = false)
     lateinit var updatedOn: OffsetDateTime
 
-    fun toDomain(): IdentityProviderLink = IdentityProviderLink(
-        id = id,
-        userId = userId,
-        identityProviderId = identityProviderId,
-        externalId = externalId,
-        metadata = metadata,
-        createdOn = createdOn,
-        updatedOn = updatedOn
-    )
+    fun toDomain(): IdentityProviderLink =
+        IdentityProviderLink(
+            id = id,
+            userId = userId,
+            identityProviderId = identityProviderId,
+            externalId = externalId,
+            metadata = metadata,
+            createdOn = createdOn,
+            updatedOn = updatedOn,
+        )
 
     companion object {
-        fun fromDomain(link: IdentityProviderLink): IdentityProviderLinkEntity = IdentityProviderLinkEntity().apply {
-            val now = OffsetDateTime.now()
-            id = link.id
-            userId = link.userId
-            identityProviderId = link.identityProviderId
-            externalId = link.externalId
-            metadata = link.metadata
-            createdOn = link.createdOn ?: now
-            updatedOn = link.updatedOn ?: now
-        }
+        fun fromDomain(link: IdentityProviderLink): IdentityProviderLinkEntity =
+            IdentityProviderLinkEntity().apply {
+                val now = OffsetDateTime.now()
+                id = link.id
+                userId = link.userId
+                identityProviderId = link.identityProviderId
+                externalId = link.externalId
+                metadata = link.metadata
+                createdOn = link.createdOn ?: now
+                updatedOn = link.updatedOn ?: now
+            }
     }
 }

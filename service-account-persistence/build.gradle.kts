@@ -2,7 +2,7 @@ import org.jboss.jandex.IndexWriter
 import org.jboss.jandex.Indexer
 
 plugins {
-    kotlin("jvm")
+    alias(libs.plugins.kotlin.jvm)
 }
 
 buildscript {
@@ -11,18 +11,16 @@ buildscript {
     }
 }
 
-val quarkusVersion: String by project
-
 dependencies {
     api(project(":service-account"))
 
-    implementation(platform("io.quarkus:quarkus-bom:${quarkusVersion}"))
-    implementation("io.quarkus:quarkus-arc")
-    implementation("io.quarkus:quarkus-hibernate-orm-panache-kotlin")
-    implementation("io.quarkus:quarkus-jdbc-postgresql")
+    implementation(platform(libs.quarkus.bom))
+    implementation(libs.quarkus.arc)
+    implementation(libs.quarkus.hibernate.orm.panache.kotlin)
+    implementation(libs.quarkus.jdbc.postgresql)
 
     testImplementation(kotlin("test"))
-    testImplementation("io.mockk:mockk:1.13.8")
+    testImplementation(libs.mockk)
 }
 
 tasks.register("jandex") {
@@ -33,16 +31,25 @@ tasks.register("jandex") {
 
     doLast {
         val indexer = Indexer()
-        val classesDir = layout.buildDirectory.dir("classes/kotlin/main").get().asFile
+        val classesDir =
+            layout.buildDirectory
+                .dir("classes/kotlin/main")
+                .get()
+                .asFile
 
-        classesDir.walkTopDown()
+        classesDir
+            .walkTopDown()
             .filter { it.isFile && it.extension == "class" }
             .forEach { classFile ->
                 classFile.inputStream().use { indexer.index(it) }
             }
 
         val index = indexer.complete()
-        val metaInfDir = layout.buildDirectory.dir("resources/main/META-INF").get().asFile
+        val metaInfDir =
+            layout.buildDirectory
+                .dir("resources/main/META-INF")
+                .get()
+                .asFile
         metaInfDir.mkdirs()
 
         val jandexFile = File(metaInfDir, "jandex.idx")

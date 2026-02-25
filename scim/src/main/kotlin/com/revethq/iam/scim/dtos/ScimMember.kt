@@ -9,5 +9,5 @@ data class ScimMember(
     val display: String? = null,
     val type: String = "User",
     @get:JsonbProperty("\$ref")
-    val ref: String? = null
+    val ref: String? = null,
 )

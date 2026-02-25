@@ -7,7 +7,7 @@ data class ScimError(
     val schemas: List<String> = listOf(SCHEMA_ERROR),
     val status: String,
     val scimType: String? = null,
-    val detail: String? = null
+    val detail: String? = null,
 ) {
     companion object {
         const val SCHEMA_ERROR = "urn:ietf:params:scim:api:messages:2.0:Error"

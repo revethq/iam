@@ -27,14 +27,13 @@ import java.util.UUID
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 class UserResource {
-
     @Inject
     lateinit var userService: UserService
 
     @POST
     fun createUser(
         request: CreateUserRequest,
-        @HeaderParam("X-Identity-Provider-Id") identityProviderId: UUID?
+        @HeaderParam("X-Identity-Provider-Id") identityProviderId: UUID?,
     ): Response {
         userService.findByUsername(request.username)?.let {
             throw UserConflictException("User with username '${request.username}' already exists")
@@ -45,30 +44,35 @@ class UserResource {
         }
 
         val user = request.toDomain()
-        val created = userService.create(
-            user,
-            identityProviderId ?: DEFAULT_IDENTITY_PROVIDER_ID,
-            null
-        )
+        val created =
+            userService.create(
+                user,
+                identityProviderId ?: DEFAULT_IDENTITY_PROVIDER_ID,
+                null,
+            )
 
-        return Response.status(Response.Status.CREATED)
+        return Response
+            .status(Response.Status.CREATED)
             .entity(UserResponse.fromDomain(created))
             .build()
     }
 
     @GET
     @Path("/{id}")
-    fun getUser(@PathParam("id") id: String): UserResponse {
+    fun getUser(
+        @PathParam("id") id: String,
+    ): UserResponse {
         val uuid = UUID.fromString(id)
-        val user = userService.findById(uuid)
-            ?: throw UserNotFoundException(id)
+        val user =
+            userService.findById(uuid)
+                ?: throw UserNotFoundException(id)
         return UserResponse.fromDomain(user)
     }
 
     @GET
     fun listUsers(
         @QueryParam("page") @DefaultValue("0") page: Int,
-        @QueryParam("size") @DefaultValue("20") size: Int
+        @QueryParam("size") @DefaultValue("20") size: Int,
     ): PageResponse<UserResponse> {
         val result = userService.list(page * size, size + 1)
         val hasMore = result.items.size > size
@@ -78,7 +82,7 @@ class UserResource {
             content = content.map { UserResponse.fromDomain(it) },
             page = page,
             size = size,
-            hasMore = hasMore
+            hasMore = hasMore,
         )
     }
 
@@ -86,16 +90,18 @@ class UserResource {
     @Path("/{id}")
     fun updateUser(
         @PathParam("id") id: String,
-        request: UpdateUserRequest
+        request: UpdateUserRequest,
     ): UserResponse {
         val uuid = UUID.fromString(id)
-        val existing = userService.findById(uuid)
-            ?: throw UserNotFoundException(id)
+        val existing =
+            userService.findById(uuid)
+                ?: throw UserNotFoundException(id)
 
-        val updated = existing.copy(
-            username = request.username,
-            email = request.email
-        )
+        val updated =
+            existing.copy(
+                username = request.username,
+                email = request.email,
+            )
 
         val saved = userService.update(updated)
         return UserResponse.fromDomain(saved)
@@ -103,7 +109,9 @@ class UserResource {
 
     @DELETE
     @Path("/{id}")
-    fun deleteUser(@PathParam("id") id: String): Response {
+    fun deleteUser(
+        @PathParam("id") id: String,
+    ): Response {
         val uuid = UUID.fromString(id)
         if (!userService.delete(uuid)) {
             throw UserNotFoundException(id)

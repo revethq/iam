@@ -10,7 +10,6 @@ import java.time.format.DateTimeParseException
  * Evaluates policy conditions against a context.
  */
 object ConditionEvaluator {
-
     /**
      * Evaluate all conditions in a statement.
      * All conditions must pass (AND logic).
@@ -22,12 +21,13 @@ object ConditionEvaluator {
      */
     fun evaluate(
         conditions: Map<String, Map<String, List<String>>>,
-        context: ConditionContext
+        context: ConditionContext,
     ): Boolean {
         // All operator blocks must pass (AND)
         for ((operatorName, keyValueMap) in conditions) {
-            val operator = ConditionOperator.fromName(operatorName)
-                ?: return false // Unknown operator fails evaluation
+            val operator =
+                ConditionOperator.fromName(operatorName)
+                    ?: return false // Unknown operator fails evaluation
 
             // All keys must pass (AND)
             for ((key, values) in keyValueMap) {
@@ -48,9 +48,9 @@ object ConditionEvaluator {
         operator: ConditionOperator,
         contextValue: String?,
         conditionValues: List<String>,
-        context: ConditionContext
-    ): Boolean {
-        return when (operator) {
+        context: ConditionContext,
+    ): Boolean =
+        when (operator) {
             // String conditions
             ConditionOperator.STRING_EQUALS ->
                 contextValue != null && conditionValues.any { it == contextValue }
@@ -96,9 +96,10 @@ object ConditionEvaluator {
             // Boolean condition
             ConditionOperator.BOOL -> {
                 val contextBool = contextValue?.toBooleanStrictOrNull()
-                contextBool != null && conditionValues.any {
-                    it.toBooleanStrictOrNull() == contextBool
-                }
+                contextBool != null &&
+                    conditionValues.any {
+                        it.toBooleanStrictOrNull() == contextBool
+                    }
             }
 
             // IP address conditions
@@ -119,17 +120,20 @@ object ConditionEvaluator {
                 }
             }
         }
-    }
 
     /**
      * Match a value against a wildcard pattern.
      * Supports `*` (any characters) and `?` (single character).
      */
-    private fun matchesLike(value: String, pattern: String): Boolean {
-        val regex = pattern
-            .replace(".", "\\.")
-            .replace("*", ".*")
-            .replace("?", ".")
+    private fun matchesLike(
+        value: String,
+        pattern: String,
+    ): Boolean {
+        val regex =
+            pattern
+                .replace(".", "\\.")
+                .replace("*", ".*")
+                .replace("?", ".")
         return Regex("^$regex$").matches(value)
     }
 
@@ -139,7 +143,7 @@ object ConditionEvaluator {
     private fun evaluateNumeric(
         contextValue: String?,
         conditionValues: List<String>,
-        compare: (BigDecimal, BigDecimal) -> Boolean
+        compare: (BigDecimal, BigDecimal) -> Boolean,
     ): Boolean {
         if (contextValue == null) return false
         val cv = contextValue.toBigDecimalOrNull() ?: return false
@@ -154,7 +158,7 @@ object ConditionEvaluator {
     private fun evaluateNumericNone(
         contextValue: String?,
         conditionValues: List<String>,
-        compare: (BigDecimal, BigDecimal) -> Boolean
+        compare: (BigDecimal, BigDecimal) -> Boolean,
     ): Boolean {
         if (contextValue == null) return false
         val cv = contextValue.toBigDecimalOrNull() ?: return false
@@ -169,7 +173,7 @@ object ConditionEvaluator {
     private fun evaluateDate(
         contextValue: String?,
         conditionValues: List<String>,
-        compare: (OffsetDateTime, OffsetDateTime) -> Boolean
+        compare: (OffsetDateTime, OffsetDateTime) -> Boolean,
     ): Boolean {
         if (contextValue == null) return false
         val cv = parseDateTime(contextValue) ?: return false
@@ -184,7 +188,7 @@ object ConditionEvaluator {
     private fun evaluateDateNone(
         contextValue: String?,
         conditionValues: List<String>,
-        compare: (OffsetDateTime, OffsetDateTime) -> Boolean
+        compare: (OffsetDateTime, OffsetDateTime) -> Boolean,
     ): Boolean {
         if (contextValue == null) return false
         val cv = parseDateTime(contextValue) ?: return false
@@ -196,25 +200,28 @@ object ConditionEvaluator {
     /**
      * Parse an ISO 8601 date-time string.
      */
-    private fun parseDateTime(value: String): OffsetDateTime? {
-        return try {
+    private fun parseDateTime(value: String): OffsetDateTime? =
+        try {
             OffsetDateTime.parse(value, DateTimeFormatter.ISO_OFFSET_DATE_TIME)
         } catch (e: DateTimeParseException) {
             null
         }
-    }
 
     /**
      * Check if an IP address matches a CIDR pattern.
      */
-    private fun matchesIpAddress(ip: String, cidr: String): Boolean {
+    private fun matchesIpAddress(
+        ip: String,
+        cidr: String,
+    ): Boolean {
         return try {
-            val (network, prefixLength) = if (cidr.contains("/")) {
-                val parts = cidr.split("/")
-                parts[0] to parts[1].toInt()
-            } else {
-                cidr to 32 // Exact match if no prefix
-            }
+            val (network, prefixLength) =
+                if (cidr.contains("/")) {
+                    val parts = cidr.split("/")
+                    parts[0] to parts[1].toInt()
+                } else {
+                    cidr to 32 // Exact match if no prefix
+                }
 
             val ipAddr = InetAddress.getByName(ip)
             val networkAddr = InetAddress.getByName(network)

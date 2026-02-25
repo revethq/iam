@@ -2,7 +2,6 @@ package com.revethq.iam.permission.evaluation
 
 import com.revethq.iam.permission.domain.Effect
 import com.revethq.iam.permission.domain.Policy
-import com.revethq.iam.permission.domain.PolicyAttachment
 import com.revethq.iam.permission.domain.Statement
 import io.mockk.every
 import io.mockk.mockk
@@ -18,7 +17,6 @@ import kotlin.test.assertTrue
  * in the persistence layer.
  */
 class PolicyCollectorTest {
-
     /**
      * Interface for group membership lookup.
      * This would be implemented in the persistence layer.
@@ -40,7 +38,7 @@ class PolicyCollectorTest {
      */
     class TestPolicyCollector(
         private val groupMembershipService: GroupMembershipService,
-        private val policyAttachmentService: PolicyAttachmentService
+        private val policyAttachmentService: PolicyAttachmentService,
     ) : PolicyCollector {
         override fun collectPolicies(principalUrn: String): List<Policy> {
             val policies = mutableListOf<Policy>()
@@ -146,7 +144,7 @@ class PolicyCollectorTest {
 
         val policies = collector.collectPolicies(userUrn)
 
-        assertEquals(1, policies.size)  // Should only appear once
+        assertEquals(1, policies.size) // Should only appear once
         assertEquals("SharedPolicy", policies[0].name)
     }
 
@@ -169,18 +167,18 @@ class PolicyCollectorTest {
         assertTrue(policies.any { it.name == "TesterPolicy" })
     }
 
-    private fun createPolicy(name: String): Policy {
-        return Policy(
+    private fun createPolicy(name: String): Policy =
+        Policy(
             id = UUID.randomUUID(),
             name = name,
             version = "2026-01-15",
-            statements = listOf(
-                Statement(
-                    effect = Effect.ALLOW,
-                    actions = listOf("*"),
-                    resources = listOf("urn:revet:*:*:*/*")
-                )
-            )
+            statements =
+                listOf(
+                    Statement(
+                        effect = Effect.ALLOW,
+                        actions = listOf("*"),
+                        resources = listOf("urn:revet:*:*:*/*"),
+                    ),
+                ),
         )
-    }
 }

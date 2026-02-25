@@ -1,10 +1,10 @@
 package com.revethq.iam.scim.api
 
-import io.quarkus.runtime.annotations.RegisterForReflection
 import com.revethq.iam.scim.dtos.ScimListResponse
 import com.revethq.iam.scim.dtos.ScimMeta
 import com.revethq.iam.scim.dtos.ScimResourceType
 import com.revethq.iam.scim.exception.ScimNotFoundException
+import io.quarkus.runtime.annotations.RegisterForReflection
 import jakarta.ws.rs.GET
 import jakarta.ws.rs.Path
 import jakarta.ws.rs.PathParam
@@ -26,7 +26,6 @@ import org.eclipse.microprofile.openapi.annotations.tags.Tag
 @Produces(MediaType.APPLICATION_JSON)
 @Tag(name = "SCIM Discovery", description = "SCIM 2.0 discovery endpoints")
 open class ResourceTypeResource {
-
     @Context
     protected lateinit var uriInfo: UriInfo
 
@@ -37,7 +36,7 @@ open class ResourceTypeResource {
     @Operation(summary = "List resource types", description = "Returns all supported SCIM resource types")
     @APIResponse(
         responseCode = "200",
-        description = "List of resource types"
+        description = "List of resource types",
     )
     open fun listResourceTypes(): ScimListResponse<ScimResourceType> {
         val resourceTypes = listOf(getUserResourceType(), getGroupResourceType())
@@ -45,7 +44,7 @@ open class ResourceTypeResource {
             totalResults = resourceTypes.size,
             startIndex = 1,
             itemsPerPage = resourceTypes.size,
-            resources = resourceTypes
+            resources = resourceTypes,
         )
     }
 
@@ -56,47 +55,46 @@ open class ResourceTypeResource {
         APIResponse(
             responseCode = "200",
             description = "Resource type found",
-            content = [Content(schema = Schema(implementation = ScimResourceType::class))]
+            content = [Content(schema = Schema(implementation = ScimResourceType::class))],
         ),
-        APIResponse(responseCode = "404", description = "Resource type not found")
+        APIResponse(responseCode = "404", description = "Resource type not found"),
     )
     open fun getResourceType(
         @Parameter(description = "Resource type name", required = true)
         @PathParam("name")
-        name: String
-    ): ScimResourceType {
-        return when (name.lowercase()) {
+        name: String,
+    ): ScimResourceType =
+        when (name.lowercase()) {
             "user" -> getUserResourceType()
             "group" -> getGroupResourceType()
             else -> throw ScimNotFoundException("ResourceType", name)
         }
-    }
 
-    private fun getUserResourceType(): ScimResourceType {
-        return ScimResourceType(
+    private fun getUserResourceType(): ScimResourceType =
+        ScimResourceType(
             id = "User",
             name = "User",
             endpoint = "/Users",
             description = "User Account",
             schema = "urn:ietf:params:scim:schemas:core:2.0:User",
-            meta = ScimMeta(
-                resourceType = "ResourceType",
-                location = "$baseUrl/scim/v2/ResourceTypes/User"
-            )
+            meta =
+                ScimMeta(
+                    resourceType = "ResourceType",
+                    location = "$baseUrl/scim/v2/ResourceTypes/User",
+                ),
         )
-    }
 
-    private fun getGroupResourceType(): ScimResourceType {
-        return ScimResourceType(
+    private fun getGroupResourceType(): ScimResourceType =
+        ScimResourceType(
             id = "Group",
             name = "Group",
             endpoint = "/Groups",
             description = "Group",
             schema = "urn:ietf:params:scim:schemas:core:2.0:Group",
-            meta = ScimMeta(
-                resourceType = "ResourceType",
-                location = "$baseUrl/scim/v2/ResourceTypes/Group"
-            )
+            meta =
+                ScimMeta(
+                    resourceType = "ResourceType",
+                    location = "$baseUrl/scim/v2/ResourceTypes/Group",
+                ),
         )
-    }
 }
