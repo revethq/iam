@@ -25,7 +25,7 @@ buildscript {
 
 allprojects {
     group = "com.revethq.iam"
-    version = "0.1.15"
+    version = "0.1.16"
 
     repositories {
         mavenCentral()
