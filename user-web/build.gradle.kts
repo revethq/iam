@@ -6,6 +6,7 @@ dependencies {
     api(project(":user"))
     api(project(":user-persistence:runtime"))
 
+    implementation(project(":permission"))
     implementation(libs.jakarta.ws.rs.api)
     implementation(libs.jakarta.enterprise.cdi.api)
     implementation(libs.jakarta.annotation.api)

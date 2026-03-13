@@ -18,6 +18,22 @@ interface PolicyEvaluator {
      * @return The authorization result
      */
     fun evaluate(request: AuthorizationRequest): AuthorizationResult
+
+    /**
+     * Evaluate an authorization request against the provided policies directly,
+     * without collecting from the principal's attachments.
+     *
+     * Useful when policies are already known or for batch evaluation
+     * (collect once via [PolicyCollector], evaluate many times).
+     *
+     * @param request The authorization request
+     * @param policies The policies to evaluate against
+     * @return The authorization result
+     */
+    fun evaluateWithPolicies(
+        request: AuthorizationRequest,
+        policies: List<Policy>,
+    ): AuthorizationResult
 }
 
 /**
@@ -58,11 +74,7 @@ class DefaultPolicyEvaluator
             return determineDecision(matchingStatements)
         }
 
-        /**
-         * Evaluate policies directly (without collecting from principal).
-         * Useful for testing or when policies are already known.
-         */
-        fun evaluateWithPolicies(
+        override fun evaluateWithPolicies(
             request: AuthorizationRequest,
             policies: List<Policy>,
         ): AuthorizationResult {

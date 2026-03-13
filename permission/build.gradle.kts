@@ -3,6 +3,8 @@ plugins {
 }
 
 dependencies {
+    api(libs.revet.core)
+
     implementation(libs.jakarta.enterprise.cdi.api)
     implementation(libs.jakarta.inject.api)
 

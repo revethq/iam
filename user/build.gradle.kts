@@ -3,5 +3,7 @@ plugins {
 }
 
 dependencies {
+    api(libs.revet.core)
+
     testImplementation(kotlin("test"))
 }

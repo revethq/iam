@@ -25,7 +25,7 @@ buildscript {
 
 allprojects {
     group = "com.revethq.iam"
-    version = "0.1.16"
+    version = "0.1.20"
 
     repositories {
         mavenCentral()
@@ -61,12 +61,6 @@ subprojects {
 
     tasks.withType<Test> {
         useJUnitPlatform()
-    }
-
-    dependencies {
-        // Version catalog type-safe accessors aren't available in subprojects {} blocks.
-        // revet-core version is defined in gradle/libs.versions.toml for reference.
-        "api"("com.revethq:revet-core:0.1.0")
     }
 
     configure<PublishingExtension> {

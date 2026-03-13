@@ -6,7 +6,7 @@ ktlint = "14.0.1"
 jandex = "3.2.0"
 mockk = "1.13.8"
 resteasy = "6.2.7.Final"
-revet-core = "0.1.0"
+revet-core = "0.2.3"
 jakarta-cdi = "4.0.1"
 jakarta-inject = "2.0.1"
 jakarta-ws-rs = "3.1.0"
@@ -18,7 +18,7 @@ microprofile-jwt = "2.1"
 
 [libraries]
 quarkus-bom = { module = "io.quarkus:quarkus-bom", version.ref = "quarkus" }
-revet-core = { module = "com.revethq:revet-core", version.ref = "revet-core" }
+revet-core = { module = "com.revethq.core:revet-core-core", version.ref = "revet-core" }
 
 # Quarkus (versions from BOM)
 quarkus-core = { module = "io.quarkus:quarkus-core" }
