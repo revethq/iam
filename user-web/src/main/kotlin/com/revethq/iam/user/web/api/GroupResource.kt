@@ -9,6 +9,7 @@ import com.revethq.iam.user.web.dto.PageResponse
 import com.revethq.iam.user.web.dto.UpdateGroupRequest
 import com.revethq.iam.user.web.exception.GroupConflictException
 import com.revethq.iam.user.web.exception.GroupNotFoundException
+import io.quarkus.arc.properties.UnlessBuildProperty
 import jakarta.inject.Inject
 import jakarta.ws.rs.Consumes
 import jakarta.ws.rs.DELETE
@@ -24,7 +25,8 @@ import jakarta.ws.rs.core.MediaType
 import jakarta.ws.rs.core.Response
 import java.util.UUID
 
-@Path("/groups")
+@UnlessBuildProperty(name = "revet.iam.resources.disabled", stringValue = "true", enableIfMissing = true)
+@Path("/api/v1/groups")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 class GroupResource {

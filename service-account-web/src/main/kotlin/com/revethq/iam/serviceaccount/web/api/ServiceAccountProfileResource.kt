@@ -6,6 +6,7 @@ import com.revethq.iam.user.domain.Profile
 import com.revethq.iam.user.domain.ProfileType
 import com.revethq.iam.user.persistence.entity.ProfileEntity
 import com.revethq.iam.user.persistence.repository.ProfileRepository
+import io.quarkus.arc.properties.UnlessBuildProperty
 import jakarta.inject.Inject
 import jakarta.transaction.Transactional
 import jakarta.ws.rs.Consumes
@@ -19,7 +20,8 @@ import jakarta.ws.rs.core.Response
 import java.time.OffsetDateTime
 import java.util.UUID
 
-@Path("/service-accounts")
+@UnlessBuildProperty(name = "revet.iam.resources.disabled", stringValue = "true", enableIfMissing = true)
+@Path("/api/v1/service-accounts")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 class ServiceAccountProfileResource {

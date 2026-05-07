@@ -4,6 +4,7 @@ import com.revethq.iam.scim.dtos.ScimListResponse
 import com.revethq.iam.scim.dtos.ScimMeta
 import com.revethq.iam.scim.dtos.ScimResourceType
 import com.revethq.iam.scim.exception.ScimNotFoundException
+import io.quarkus.arc.properties.UnlessBuildProperty
 import io.quarkus.runtime.annotations.RegisterForReflection
 import jakarta.ws.rs.GET
 import jakarta.ws.rs.Path
@@ -20,6 +21,7 @@ import org.eclipse.microprofile.openapi.annotations.responses.APIResponse
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponses
 import org.eclipse.microprofile.openapi.annotations.tags.Tag
 
+@UnlessBuildProperty(name = "revet.iam.resources.disabled", stringValue = "true", enableIfMissing = true)
 @ScimEndpoint
 @RegisterForReflection
 @Path("/scim/v2/ResourceTypes")

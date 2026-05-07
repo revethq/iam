@@ -13,6 +13,7 @@ import com.revethq.iam.permission.web.exception.PolicyAttachmentConflictExceptio
 import com.revethq.iam.permission.web.exception.PolicyAttachmentNotFoundException
 import com.revethq.iam.permission.web.exception.PolicyConflictException
 import com.revethq.iam.permission.web.exception.PolicyNotFoundException
+import io.quarkus.arc.properties.UnlessBuildProperty
 import jakarta.inject.Inject
 import jakarta.ws.rs.Consumes
 import jakarta.ws.rs.DELETE
@@ -28,7 +29,8 @@ import jakarta.ws.rs.core.MediaType
 import jakarta.ws.rs.core.Response
 import java.util.UUID
 
-@Path("/policies")
+@UnlessBuildProperty(name = "revet.iam.resources.disabled", stringValue = "true", enableIfMissing = true)
+@Path("/api/v1/policies")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 class PolicyResource {

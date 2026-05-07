@@ -63,23 +63,24 @@ class PolicyAttachmentServiceImpl(
 
     override fun listPoliciesForPrincipal(principalUrn: String): List<Policy> {
         log.info("Looking up policies for principal: $principalUrn")
-        val attachments = policyAttachmentRepository.findByPrincipalUrn(principalUrn)
-        log.info("Found ${attachments.size} attachments for principal")
-        val policies =
-            attachments.mapNotNull { attachment ->
-                log.info("Loading policy: ${attachment.policyId}")
-                policyRepository.findById(attachment.policyId)?.toDomain()
-            }
-        log.info("Loaded ${policies.size} policies")
+        val policies = policyRepository.findByPrincipalUrn(principalUrn).map { it.toDomain() }
+        log.info("Found ${policies.size} policies for principal")
         return policies
     }
 
     override fun listAttachedPoliciesForPrincipal(principalUrn: String): List<AttachedPolicy> {
         log.info("Looking up attached policies for principal: $principalUrn")
         val attachments = policyAttachmentRepository.findByPrincipalUrn(principalUrn)
-        log.info("Found ${attachments.size} attachments for principal")
+        if (attachments.isEmpty()) return emptyList()
+
+        val policiesById =
+            policyRepository
+                .findByPrincipalUrn(principalUrn)
+                .associate { it.id to it.toDomain() }
+        log.info("Found ${attachments.size} attachments with ${policiesById.size} policies for principal")
+
         return attachments.mapNotNull { attachment ->
-            val policy = policyRepository.findById(attachment.policyId)?.toDomain()
+            val policy = policiesById[attachment.policyId]
             if (policy != null) {
                 AttachedPolicy(
                     attachmentId = attachment.id,

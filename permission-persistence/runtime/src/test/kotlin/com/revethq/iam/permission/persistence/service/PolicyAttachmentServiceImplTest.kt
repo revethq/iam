@@ -102,8 +102,7 @@ class PolicyAttachmentServiceImplTest {
         val attachment = createAttachmentEntity(policyId = policy1Id)
         val policyEntity = createPolicyEntity(policy1Id, "Policy1")
 
-        every { policyAttachmentRepository.findByPrincipalUrn(principalUrn) } returns listOf(attachment)
-        every { policyRepository.findById(policy1Id) } returns policyEntity
+        every { policyRepository.findByPrincipalUrn(principalUrn) } returns listOf(policyEntity)
 
         val result = service.listPoliciesForPrincipal(principalUrn)
 

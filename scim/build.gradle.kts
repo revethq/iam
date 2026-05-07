@@ -15,6 +15,7 @@ dependencies {
     api(libs.jakarta.enterprise.cdi.api)
     api(platform(libs.quarkus.bom))
     api(libs.quarkus.core)
+    implementation(libs.quarkus.arc)
     api(libs.jakarta.transaction.api)
 
     testImplementation(kotlin("test"))

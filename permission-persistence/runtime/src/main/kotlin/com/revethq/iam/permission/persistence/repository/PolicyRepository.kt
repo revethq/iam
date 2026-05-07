@@ -25,4 +25,10 @@ class PolicyRepository : PanacheRepositoryBase<PolicyEntity, UUID> {
         } else {
             find("tenantId is null").list()
         }
+
+    fun findByPrincipalUrn(principalUrn: String): List<PolicyEntity> =
+        find(
+            "id IN (SELECT a.policyId FROM PolicyAttachmentEntity a WHERE a.principalUrn = ?1)",
+            principalUrn,
+        ).list()
 }

@@ -10,6 +10,7 @@ import com.revethq.iam.scim.mappers.toDomain
 import com.revethq.iam.scim.mappers.toScimUser
 import com.revethq.iam.scim.mappers.updateDomain
 import com.revethq.iam.user.persistence.service.UserService
+import io.quarkus.arc.properties.UnlessBuildProperty
 import io.quarkus.runtime.annotations.RegisterForReflection
 import jakarta.inject.Inject
 import jakarta.transaction.Transactional
@@ -38,6 +39,7 @@ import org.eclipse.microprofile.openapi.annotations.responses.APIResponses
 import org.eclipse.microprofile.openapi.annotations.tags.Tag
 import java.util.UUID
 
+@UnlessBuildProperty(name = "revet.iam.resources.disabled", stringValue = "true", enableIfMissing = true)
 @ScimEndpoint
 @RegisterForReflection
 @Path("/scim/v2/Users")

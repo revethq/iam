@@ -2,6 +2,7 @@ package com.revethq.iam.scim.api
 
 import com.revethq.iam.scim.dtos.ScimMeta
 import com.revethq.iam.scim.dtos.ServiceProviderConfig
+import io.quarkus.arc.properties.UnlessBuildProperty
 import io.quarkus.runtime.annotations.RegisterForReflection
 import jakarta.ws.rs.GET
 import jakarta.ws.rs.Path
@@ -15,6 +16,7 @@ import org.eclipse.microprofile.openapi.annotations.media.Schema
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponse
 import org.eclipse.microprofile.openapi.annotations.tags.Tag
 
+@UnlessBuildProperty(name = "revet.iam.resources.disabled", stringValue = "true", enableIfMissing = true)
 @ScimEndpoint
 @RegisterForReflection
 @Path("/scim/v2/ServiceProviderConfig")

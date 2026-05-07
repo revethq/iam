@@ -6,6 +6,7 @@ import com.revethq.iam.serviceaccount.web.dto.PageResponse
 import com.revethq.iam.serviceaccount.web.dto.ServiceAccountResponse
 import com.revethq.iam.serviceaccount.web.dto.UpdateServiceAccountRequest
 import com.revethq.iam.serviceaccount.web.exception.ServiceAccountNotFoundException
+import io.quarkus.arc.properties.UnlessBuildProperty
 import jakarta.inject.Inject
 import jakarta.ws.rs.Consumes
 import jakarta.ws.rs.DELETE
@@ -21,7 +22,8 @@ import jakarta.ws.rs.core.MediaType
 import jakarta.ws.rs.core.Response
 import java.util.UUID
 
-@Path("/service-accounts")
+@UnlessBuildProperty(name = "revet.iam.resources.disabled", stringValue = "true", enableIfMissing = true)
+@Path("/api/v1/service-accounts")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 class ServiceAccountResource {

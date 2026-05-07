@@ -3,6 +3,7 @@ package com.revethq.iam.permission.web.api
 import com.revethq.iam.permission.service.PolicyAttachmentService
 import com.revethq.iam.permission.web.dto.AttachedPolicyResponse
 import com.revethq.iam.permission.web.dto.PageResponse
+import io.quarkus.arc.properties.UnlessBuildProperty
 import jakarta.inject.Inject
 import jakarta.ws.rs.Consumes
 import jakarta.ws.rs.DefaultValue
@@ -13,7 +14,8 @@ import jakarta.ws.rs.Produces
 import jakarta.ws.rs.QueryParam
 import jakarta.ws.rs.core.MediaType
 
-@Path("/users")
+@UnlessBuildProperty(name = "revet.iam.resources.disabled", stringValue = "true", enableIfMissing = true)
+@Path("/api/v1/users")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 class UserPolicyResource {

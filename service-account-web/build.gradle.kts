@@ -9,6 +9,7 @@ dependencies {
     api(project(":permission-web"))
 
     implementation(platform(libs.quarkus.bom))
+    implementation(libs.quarkus.arc)
     implementation(libs.quarkus.hibernate.orm.panache.kotlin)
     implementation(libs.jakarta.ws.rs.api)
     implementation(libs.jakarta.enterprise.cdi.api)
